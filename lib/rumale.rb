@@ -1,6 +1,12 @@
 # frozen_string_literal: true
 
-require 'numo/narray'
+begin
+  require 'cumo/narray'
+  Xumo = Cumo
+rescue LoadError
+  require 'numo/narray'
+  Xumo = Numo
+end
 
 require 'rumale/rumale'
 
