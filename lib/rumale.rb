@@ -2,6 +2,7 @@
 
 begin
   require 'cumo/narray'
+  Cumo.enable_compatible_mode
   Xumo = Cumo
 rescue LoadError
   require 'numo/narray'
