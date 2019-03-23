@@ -26,7 +26,14 @@ module Rumale
         y_pred = check_convert_tvalue_array(y_pred)
 
         n_samples, n_classes = y_pred.shape
-        clipped_p = y_pred.clip(eps, 1 - eps)
+        error_num = 0
+        begin
+          clipped_p = y_pred.clip(eps, 1 - eps)
+        rescue Cumo::NArray::OperationError => e
+          error_num += 1
+          raise e if error_num > 5
+          retry
+        end
 
         log_loss = if n_classes.nil?
                      negative_label = y_true.to_a.uniq.min
