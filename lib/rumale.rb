@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-
 if ENV['CUMO']
   begin
     require 'cumo/narray'
     Cumo.enable_compatible_mode
+    require Pathname(__FILE__).dirname + './monkey_patches/cumo'
     Xumo = Cumo
   rescue LoadError
     require 'numo/narray'
