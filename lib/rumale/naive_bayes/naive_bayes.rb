@@ -13,33 +13,33 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples = x.shape.first
         decision_values = decision_function(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
+        Xumo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index.to_i] })
       end
 
       # Predict log-probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
       def predict_log_proba(x)
         x = check_convert_sample_array(x)
         n_samples, = x.shape
         log_likelihoods = decision_function(x)
-        log_likelihoods - Numo::NMath.log(Numo::NMath.exp(log_likelihoods).sum(1)).reshape(n_samples, 1)
+        log_likelihoods - Xumo::NMath.log(Xumo::NMath.exp(log_likelihoods).sum(1)).reshape(n_samples, 1)
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
-        Numo::NMath.exp(predict_log_proba(x)).abs
+        Xumo::NMath.exp(predict_log_proba(x)).abs
       end
     end
 
@@ -51,19 +51,19 @@ module Rumale
     #   results = estimator.predict(testing_samples)
     class GaussianNB < BaseNaiveBayes
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the prior probabilities of the classes.
-      # @return [Numo::DFloat] (shape: [n_classes])
+      # @return [Xumo::DFloat] (shape: [n_classes])
       attr_reader :class_priors
 
       # Return the mean vectors of the classes.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_features])
       attr_reader :means
 
       # Return the variance vectors of the classes.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_features])
       attr_reader :variances
 
       # Create a new classifier with Gaussian Naive Bayes.
@@ -73,8 +73,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
       #   to be used for fitting the model.
       # @return [GaussianNB] The learned classifier itself.
       def fit(x, y)
@@ -82,26 +82,26 @@ module Rumale
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
-        @class_priors = Numo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
-        @means = Numo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].mean(0) }]
-        @variances = Numo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].var(0) }]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
+        @class_priors = Xumo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
+        @means = Xumo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].mean(0) }]
+        @variances = Xumo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].var(0) }]
         self
       end
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
         log_likelihoods = Array.new(n_classes) do |l|
           Math.log(@class_priors[l]) - 0.5 * (
-            Numo::NMath.log(2.0 * Math::PI * @variances[l, true]) +
+            Xumo::NMath.log(2.0 * Math::PI * @variances[l, true]) +
             ((x - @means[l, true])**2 / @variances[l, true])).sum(1)
         end
-        Numo::DFloat[*log_likelihoods].transpose
+        Xumo::DFloat[*log_likelihoods].transpose
       end
 
       # Dump marshal data.
@@ -139,15 +139,15 @@ module Rumale
     # - C D. Manning, P. Raghavan, and H. Schutze, "Introduction to Information Retrieval," Cambridge University Press., 2008.
     class MultinomialNB < BaseNaiveBayes
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the prior probabilities of the classes.
-      # @return [Numo::DFloat] (shape: [n_classes])
+      # @return [Xumo::DFloat] (shape: [n_classes])
       attr_reader :class_priors
 
       # Return the conditional probabilities for features of each class.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_features])
       attr_reader :feature_probs
 
       # Create a new classifier with Multinomial Naive Bayes.
@@ -162,8 +162,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
       #   to be used for fitting the model.
       # @return [MultinomialNB] The learned classifier itself.
       def fit(x, y)
@@ -171,9 +171,9 @@ module Rumale
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
-        @class_priors = Numo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
-        count_features = Numo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].sum(0) }]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
+        @class_priors = Xumo::DFloat[*@classes.to_a.map { |l| y.eq(l).count / n_samples.to_f }]
+        count_features = Xumo::DFloat[*@classes.to_a.map { |l| x[y.eq(l).where, true].sum(0) }]
         count_features += @params[:smoothing_param]
         n_classes = @classes.size
         @feature_probs = count_features / count_features.sum(1).reshape(n_classes, 1)
@@ -182,16 +182,16 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
         bin_x = x.gt(0)
         log_likelihoods = Array.new(n_classes) do |l|
-          Math.log(@class_priors[l]) + (Numo::DFloat[*bin_x] * Numo::NMath.log(@feature_probs[l, true])).sum(1)
+          Math.log(@class_priors[l]) + (Xumo::DFloat[*bin_x] * Xumo::NMath.log(@feature_probs[l, true])).sum(1)
         end
-        Numo::DFloat[*log_likelihoods].transpose
+        Xumo::DFloat[*log_likelihoods].transpose
       end
 
       # Dump marshal data.
@@ -227,15 +227,15 @@ module Rumale
     # - C D. Manning, P. Raghavan, and H. Schutze, "Introduction to Information Retrieval," Cambridge University Press., 2008.
     class BernoulliNB < BaseNaiveBayes
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the prior probabilities of the classes.
-      # @return [Numo::DFloat] (shape: [n_classes])
+      # @return [Xumo::DFloat] (shape: [n_classes])
       attr_reader :class_priors
 
       # Return the conditional probabilities for features of each class.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_features])
       attr_reader :feature_probs
 
       # Create a new classifier with Bernoulli Naive Bayes.
@@ -252,8 +252,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The categorical variables (e.g. labels)
       #   to be used for fitting the model.
       # @return [BernoulliNB] The learned classifier itself.
       def fit(x, y)
@@ -261,11 +261,11 @@ module Rumale
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         n_samples, = x.shape
-        bin_x = Numo::DFloat[*x.gt(@params[:bin_threshold])]
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
-        n_samples_each_class = Numo::DFloat[*@classes.to_a.map { |l| y.eq(l).count.to_f }]
+        bin_x = Xumo::DFloat[*x.gt(@params[:bin_threshold])]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
+        n_samples_each_class = Xumo::DFloat[*@classes.to_a.map { |l| y.eq(l).count.to_f }]
         @class_priors = n_samples_each_class / n_samples
-        count_features = Numo::DFloat[*@classes.to_a.map { |l| bin_x[y.eq(l).where, true].sum(0) }]
+        count_features = Xumo::DFloat[*@classes.to_a.map { |l| bin_x[y.eq(l).where, true].sum(0) }]
         count_features += @params[:smoothing_param]
         n_samples_each_class += 2.0 * @params[:smoothing_param]
         n_classes = @classes.size
@@ -275,19 +275,19 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
-        bin_x = Numo::DFloat[*x.gt(@params[:bin_threshold])]
-        not_bin_x = Numo::DFloat[*x.le(@params[:bin_threshold])]
+        bin_x = Xumo::DFloat[*x.gt(@params[:bin_threshold])]
+        not_bin_x = Xumo::DFloat[*x.le(@params[:bin_threshold])]
         log_likelihoods = Array.new(n_classes) do |l|
           Math.log(@class_priors[l]) + (
-            (Numo::DFloat[*bin_x] * Numo::NMath.log(@feature_probs[l, true])).sum(1)
-            (Numo::DFloat[*not_bin_x] * Numo::NMath.log(1.0 - @feature_probs[l, true])).sum(1))
+            (Xumo::DFloat[*bin_x] * Xumo::NMath.log(@feature_probs[l, true])).sum(1)
+            (Xumo::DFloat[*not_bin_x] * Xumo::NMath.log(1.0 - @feature_probs[l, true])).sum(1))
         end
-        Numo::DFloat[*log_likelihoods].transpose
+        Xumo::DFloat[*log_likelihoods].transpose
       end
 
       # Dump marshal data.

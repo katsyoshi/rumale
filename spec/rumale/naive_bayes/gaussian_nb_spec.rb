@@ -11,16 +11,16 @@ RSpec.describe Rumale::NaiveBayes::GaussianNB do
   it 'classifies three clusters data.' do
     _n_samples, n_features = samples.shape
     estimator.fit(samples, labels)
-    expect(estimator.class_priors.class).to eq(Numo::DFloat)
+    expect(estimator.class_priors.class).to eq(Xumo::DFloat)
     expect(estimator.class_priors.shape[0]).to eq(3)
     expect(estimator.class_priors.shape[1]).to be_nil
-    expect(estimator.means.class).to eq(Numo::DFloat)
+    expect(estimator.means.class).to eq(Xumo::DFloat)
     expect(estimator.means.shape[0]).to eq(3)
     expect(estimator.means.shape[1]).to eq(n_features)
-    expect(estimator.variances.class).to eq(Numo::DFloat)
+    expect(estimator.variances.class).to eq(Xumo::DFloat)
     expect(estimator.variances.shape[0]).to eq(3)
     expect(estimator.variances.shape[1]).to eq(n_features)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(3)
     expect(estimator.score(samples, labels)).to eq(1.0)
   end
@@ -29,11 +29,11 @@ RSpec.describe Rumale::NaiveBayes::GaussianNB do
     n_samples, _n_features = samples.shape
     estimator.fit(samples, labels)
     probs = estimator.predict_proba(samples)
-    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.class).to eq(Xumo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(3)
     classes = labels.to_a.uniq.sort
-    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    predicted = Xumo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index.to_i] })]
     expect(predicted).to eq(labels)
   end
 

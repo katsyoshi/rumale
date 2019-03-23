@@ -26,7 +26,7 @@ module Rumale
       attr_reader :estimators
 
       # Return the class labels.
-      # @return [Numo::Int32] (shape: [n_classes])
+      # @return [Xumo::Int32] (shape: [n_classes])
       attr_reader :classes
 
       # Create a new multi-class classifier with the one-vs-rest startegy.
@@ -42,17 +42,17 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [OneVsRestClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
         y_arr = y.to_a
-        @classes = Numo::Int32.asarray(y_arr.uniq.sort)
+        @classes = Xumo::Int32.asarray(y_arr.uniq.sort)
         @estimators = @classes.to_a.map do |label|
-          bin_y = Numo::Int32.asarray(y_arr.map { |l| l == label ? 1 : -1 })
+          bin_y = Xumo::Int32.asarray(y_arr.map { |l| l == label ? 1 : -1 })
           @params[:estimator].dup.fit(x, bin_y)
         end
         self
@@ -60,23 +60,23 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Confidence scores per sample for each class.
       def decision_function(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
-        Numo::DFloat.asarray(Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }).transpose
+        Xumo::DFloat.asarray(Array.new(n_classes) { |m| @estimators[m].decision_function(x).to_a }).transpose
       end
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples, = x.shape
         decision_values = decision_function(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] })
+        Xumo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index.to_i] })
       end
 
       # Dump marshal data.

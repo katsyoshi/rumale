@@ -149,7 +149,7 @@ module Rumale
         node.leaf = true
         node.leaf_id = @n_leaves
         @n_leaves += 1
-        @leaf_labels.push(@classes[node.probs.max_index])
+        @leaf_labels.push(@classes[node.probs.max_index.to_i])
         node
       end
 

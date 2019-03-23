@@ -16,28 +16,28 @@ RSpec.describe Rumale::LinearModel::LogisticRegression do
   let(:predicted) { estimator.predict(x) }
   let(:probs) { estimator.predict_proba(x) }
   let(:score) { estimator.score(x, y) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Xumo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
   context 'when binary classification problem' do
     let(:dataset) { two_clusters_dataset }
 
     it 'classifies two clusters.', :aggregate_failures do
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes.class).to eq(Xumo::Int32)
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.bias_term).to be_zero
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals.class).to eq(Xumo::DFloat)
       expect(func_vals.ndim).to eq(1)
       expect(func_vals.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted.class).to eq(Xumo::Int32)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
-      expect(probs.class).to eq(Numo::DFloat)
+      expect(probs.class).to eq(Xumo::DFloat)
       expect(probs.ndim).to eq(2)
       expect(probs.shape[0]).to eq(n_samples)
       expect(probs.shape[1]).to eq(n_classes)
