@@ -1,10 +1,16 @@
 # frozen_string_literal: true
 
-begin
-  require 'cumo/narray'
-  Cumo.enable_compatible_mode
-  Xumo = Cumo
-rescue LoadError
+
+if ENV['CUMO']
+  begin
+    require 'cumo/narray'
+    Cumo.enable_compatible_mode
+    Xumo = Cumo
+  rescue LoadError
+    require 'numo/narray'
+    Xumo = Numo
+  end
+else
   require 'numo/narray'
   Xumo = Numo
 end
