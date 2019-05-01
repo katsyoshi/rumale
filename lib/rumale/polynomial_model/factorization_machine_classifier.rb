@@ -25,19 +25,19 @@ module Rumale
       include Base::Classifier
 
       # Return the factor matrix for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_classes, n_factors, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_factors, n_features])
       attr_reader :factor_mat
 
       # Return the weight vector for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_classes, n_features])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_features])
       attr_reader :weight_vec
 
       # Return the bias term for Factoriazation Machine.
-      # @return [Numo::DFloat] (shape: [n_classes])
+      # @return [Xumo::DFloat] (shape: [n_classes])
       attr_reader :bias_term
 
       # Return the class labels.
-      # @return [Numo::Int32] (shape: [n_classes])
+      # @return [Xumo::Int32] (shape: [n_classes])
       attr_reader :classes
 
       # Return the random generator for random sampling.
@@ -54,10 +54,6 @@ module Rumale
       # @param batch_size [Integer] The size of the mini batches.
       # @param optimizer [Optimizer] The optimizer to calculate adaptive learning rate.
       #   If nil is given, Nadam is used.
-      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
-      #   If nil is given, the methods do not execute in parallel.
-      #   If zero or less is given, it becomes equal to the number of processors.
-      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(n_factors: 2, loss: 'hinge', reg_param_linear: 1.0, reg_param_factor: 1.0,
                      max_iter: 1000, batch_size: 10, optimizer: nil, n_jobs: nil, random_seed: nil)
@@ -74,39 +70,56 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [FactorizationMachineClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
 
         if multiclass_problem?
           n_classes = @classes.size
           n_features = x.shape[1]
-          @factor_mat = Numo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
-          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
-          @bias_term = Numo::DFloat.zeros(n_classes)
+          @factor_mat = Xumo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
+          @weight_vec = Xumo::DFloat.zeros(n_classes, n_features)
+          @bias_term = Xumo::DFloat.zeros(n_classes)
           if enable_parallel?
             # :nocov:
             models = parallel_map(n_classes) do |n|
-              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              bin_y = Xumo::Int32.cast(y.eq(@classes[n])) * 2 - 1
               partial_fit(x, bin_y)
             end
             # :nocov:
             n_classes.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = models[n] }
           else
             n_classes.times do |n|
-              bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+              bin_y = Xumo::Int32.cast(y.eq(@classes[n])) * 2 - 1
               @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
             end
           end
         else
           negative_label = @classes[0]
-          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          bin_y = Xumo::Int32.cast(y.ne(negative_label)) * 2 - 1
+=======
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
+        n_classes = @classes.size
+        _n_samples, n_features = x.shape
+
+        if n_classes > 2
+          @factor_mat = Xumo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
+          @weight_vec = Xumo::DFloat.zeros(n_classes, n_features)
+          @bias_term = Xumo::DFloat.zeros(n_classes)
+          n_classes.times do |n|
+            bin_y = Xumo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+            @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
+          end
+        else
+          negative_label = y.to_a.uniq.min
+          bin_y = Xumo::Int32.cast(y.ne(negative_label)) * 2 - 1
+>>>>>>> fix polynominal model: add max_index.to_i
           @factor_mat, @weight_vec, @bias_term = partial_fit(x, bin_y)
         end
 
@@ -115,8 +128,8 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
         x = check_convert_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)
@@ -130,8 +143,8 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
 
@@ -147,20 +160,20 @@ module Rumale
                       decision_values = decision_function(x).ge(0.0).to_a
                       Array.new(n_samples) { |n| @classes[decision_values[n]] }
                     end
-        Numo::Int32.asarray(predicted)
+        Xumo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
-        proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
+        proba = 1.0 / (Xumo::NMath.exp(-decision_function(x)) + 1.0)
         return (proba.transpose / proba.sum(axis: 1)).transpose.dup if multiclass_problem?
 
         n_samples, = x.shape
-        probs = Numo::DFloat.zeros(n_samples, 2)
+        probs = Xumo::DFloat.zeros(n_samples, 2)
         probs[true, 1] = proba
         probs[true, 0] = 1.0 - proba
         probs
@@ -197,14 +210,14 @@ module Rumale
 
       def hinge_loss_gradient(x, ex_x, y, factor, weight)
         evaluated = y * bin_decision_function(x, ex_x, factor, weight)
-        gradient = Numo::DFloat.zeros(evaluated.size)
+        gradient = Xumo::DFloat.zeros(evaluated.size)
         gradient[evaluated < 1.0] = -y[evaluated < 1.0]
         gradient
       end
 
       def logistic_loss_gradient(x, ex_x, y, factor, weight)
         evaluated = y * bin_decision_function(x, ex_x, factor, weight)
-        sigmoid_func = 1.0 / (Numo::NMath.exp(-evaluated) + 1.0)
+        sigmoid_func = 1.0 / (Xumo::NMath.exp(-evaluated) + 1.0)
         (sigmoid_func - 1.0) * y
       end
 
