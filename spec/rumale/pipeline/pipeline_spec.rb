@@ -49,7 +49,7 @@ RSpec.describe Rumale::Pipeline::Pipeline do
   it 'transforms high-dimensional data with NMF and PCA.' do
     n_samples, n_features = x.shape
     n_high_features = 16
-    projected_x = x.abs.dot(Numo::DFloat.new(n_features, n_high_features).rand)
+    projected_x = x.abs.dot(Xumo::DFloat.new(n_features, n_high_features).rand)
 
     pipe = described_class.new(steps: { nmf: nmf, pca: pca })
     trans_x = pipe.fit_transform(projected_x, y)
@@ -72,12 +72,12 @@ RSpec.describe Rumale::Pipeline::Pipeline do
     pipe.fit(x, y)
 
     probs = pipe.predict_proba(x)
-    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    predicted = Xumo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index.to_i] })]
     expect(probs.shape).to match([n_samples, 2])
     expect(predicted).to eq(y)
 
     log_probs = pipe.predict_log_proba(x)
-    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[log_probs[n, true].max_index] })]
+    predicted = Xumo::Int32[*(Array.new(n_samples) { |n| classes[log_probs[n, true].max_index.to_i] })]
     expect(log_probs.shape).to match([n_samples, 2])
     expect(predicted).to eq(y)
   end
