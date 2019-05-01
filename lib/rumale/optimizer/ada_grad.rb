@@ -31,11 +31,11 @@ module Rumale
 
       # Calculate the updated weight with AdaGrad adaptive learning rate.
       #
-      # @param weight [Numo::DFloat] (shape: [n_features]) The weight to be updated.
-      # @param gradient [Numo::DFloat] (shape: [n_features]) The gradient for updating the weight.
-      # @return [Numo::DFloat] (shape: [n_feautres]) The updated weight.
+      # @param weight [Xumo::DFloat] (shape: [n_features]) The weight to be updated.
+      # @param gradient [Xumo::DFloat] (shape: [n_features]) The gradient for updating the weight.
+      # @return [Xumo::DFloat] (shape: [n_feautres]) The updated weight.
       def call(weight, gradient)
-        @moment ||= Numo::DFloat.zeros(weight.shape[0])
+        @moment ||= Xumo::DFloat.zeros(weight.shape[0])
         @moment += gradient**2
         weight - (@params[:learning_rate] / (@moment**0.5 + 1.0e-8)) * gradient
       end

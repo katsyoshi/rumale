@@ -4,8 +4,8 @@ require 'spec_helper'
 
 RSpec.describe Rumale::Optimizer::Adam do
   let(:x) { two_clusters_dataset[0] }
-  let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
-  let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
+  let(:y) { x.dot(Xumo::DFloat[1.0, 2.0]) }
+  let(:y_mult) { x.dot(Xumo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:optimizer) { described_class.new(learning_rate: 0.1, decay1: 0.8, decay2: 0.8) }
   let(:estimator) { Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, max_iter: 100, random_seed: 1) }
 
@@ -20,7 +20,7 @@ RSpec.describe Rumale::Optimizer::Adam do
   end
 
   it 'dumps and restores itself using Marshal module.' do
-    optimizer.call(Numo::DFloat.new(3).rand, Numo::DFloat.new(3).rand)
+    optimizer.call(Xumo::DFloat.new(3).rand, Xumo::DFloat.new(3).rand)
     copied = Marshal.load(Marshal.dump(optimizer))
     expect(optimizer.class).to eq(copied.class)
     expect(optimizer.params).to eq(copied.params)
