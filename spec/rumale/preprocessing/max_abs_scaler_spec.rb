@@ -3,7 +3,7 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::Preprocessing::MaxAbsScaler do
-  let(:samples) { Numo::DFloat[[0.8, 0.2], [-0.3, 0.5], [0.6, -0.9]] }
+  let(:samples) { Xumo::DFloat[[0.8, 0.2], [-0.3, 0.5], [0.6, -0.9]] }
   let(:n_samples) { samples.shape[0] }
   let(:n_features) { samples.shape[1] }
 
@@ -14,7 +14,7 @@ RSpec.describe Rumale::Preprocessing::MaxAbsScaler do
     expect(normalized.shape[1]).to eq(n_features)
     expect(normalized.min).to eq(-1)
     expect(normalized.max).to eq(1)
-    expect(normalizer.max_abs_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.max_abs_vec.class).to eq(Xumo::DFloat)
     expect(normalizer.max_abs_vec.shape[0]).to eq(n_features)
     expect(normalizer.max_abs_vec.shape[1]).to be_nil
     expect(normalizer.max_abs_vec[0]).to eq(0.8)
