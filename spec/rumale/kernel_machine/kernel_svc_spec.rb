@@ -19,20 +19,20 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
   let(:predicted) { estimator.predict(kernel_mat) }
   let(:probs) { estimator.predict_proba(kernel_mat) }
   let(:score) { estimator.score(kernel_mat, y) }
-  let(:predicted_by_probs) { Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
+  let(:predicted_by_probs) { Xumo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })] }
   let(:copied) { Marshal.load(Marshal.dump(estimator)) }
 
   context 'when binary classification problem' do
     let(:dataset) { xor_dataset }
 
     it 'classifies xor data.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals.class).to eq(Xumo::DFloat)
       expect(func_vals.ndim).to eq(1)
       expect(func_vals.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted.class).to eq(Xumo::Int32)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
@@ -55,7 +55,7 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with xor data.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs.class).to eq(Xumo::DFloat)
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(2)
@@ -69,19 +69,19 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
     let(:dataset) { three_clusters_dataset }
 
     it 'classifies three clusters.', :aggregate_failures do
-      expect(estimator.classes.class).to eq(Numo::Int32)
+      expect(estimator.classes.class).to eq(Xumo::Int32)
       expect(estimator.classes.size).to eq(n_classes)
       expect(estimator.classes.ndim).to eq(1)
       expect(estimator.classes.shape[0]).to eq(n_classes)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_classes)
       expect(estimator.weight_vec.shape[1]).to eq(n_samples)
-      expect(func_vals.class).to eq(Numo::DFloat)
+      expect(func_vals.class).to eq(Xumo::DFloat)
       expect(func_vals.ndim).to eq(2)
       expect(func_vals.shape[0]).to eq(n_samples)
       expect(func_vals.shape[1]).to eq(n_classes)
-      expect(predicted.class).to eq(Numo::Int32)
+      expect(predicted.class).to eq(Xumo::Int32)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted).to eq(y)
@@ -92,7 +92,7 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       let(:probability) { true }
 
       it 'estimates class probabilities with three clusters dataset.', :aggregate_failures do
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs.class).to eq(Xumo::DFloat)
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)
@@ -105,33 +105,33 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       let(:n_jobs) { -1 }
 
       it 'estimates class probabilities with three clusters dataset in parallel.', :aggregate_failures do
-        # FIXME: Remove Numo::Linalg temporarily for avoiding Parallel::DeadWorker error.
-        backup = Numo::Linalg
+        # FIXME: Remove Xumo::Linalg temporarily for avoiding Parallel::DeadWorker error.
+        backup = Xumo::Linalg
         Numo.class_eval { remove_const(:Linalg) }
 
-        expect(estimator.classes.class).to eq(Numo::Int32)
+        expect(estimator.classes.class).to eq(Xumo::Int32)
         expect(estimator.classes.ndim).to eq(1)
         expect(estimator.classes.shape[0]).to eq(n_classes)
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_classes)
         expect(estimator.weight_vec.shape[1]).to eq(n_samples)
-        expect(func_vals.class).to eq(Numo::DFloat)
+        expect(func_vals.class).to eq(Xumo::DFloat)
         expect(func_vals.ndim).to eq(2)
         expect(func_vals.shape[0]).to eq(n_samples)
         expect(func_vals.shape[1]).to eq(n_classes)
-        expect(predicted.class).to eq(Numo::Int32)
+        expect(predicted.class).to eq(Xumo::Int32)
         expect(predicted.ndim).to eq(1)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted).to eq(y)
-        expect(probs.class).to eq(Numo::DFloat)
+        expect(probs.class).to eq(Xumo::DFloat)
         expect(probs.ndim).to eq(2)
         expect(probs.shape[0]).to eq(n_samples)
         expect(probs.shape[1]).to eq(n_classes)
         expect(predicted_by_probs).to eq(y)
         expect(score).to eq(1.0)
 
-        Numo::Linalg = backup
+        Xumo::Linalg = backup
       end
     end
   end

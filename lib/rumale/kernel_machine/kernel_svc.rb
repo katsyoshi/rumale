@@ -30,11 +30,11 @@ module Rumale
       include Base::Classifier
 
       # Return the weight vector for Kernel SVC.
-      # @return [Numo::DFloat] (shape: [n_classes, n_trainig_sample])
+      # @return [Xumo::DFloat] (shape: [n_classes, n_trainig_sample])
       attr_reader :weight_vec
 
       # Return the class labels.
-      # @return [Numo::Int32] (shape: [n_classes])
+      # @return [Xumo::Int32] (shape: [n_classes])
       attr_reader :classes
 
       # Return the random generator for performing random sampling.
@@ -46,10 +46,6 @@ module Rumale
       # @param reg_param [Float] The regularization parameter.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param probability [Boolean] The flag indicating whether to perform probability estimation.
-      # @param n_jobs [Integer] The number of jobs for running the fit and predict methods in parallel.
-      #   If nil is given, the methods do not execute in parallel.
-      #   If zero or less is given, it becomes equal to the number of processors.
-      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def initialize(reg_param: 1.0, max_iter: 1000, probability: false, n_jobs: nil, random_seed: nil)
         check_params_numeric(reg_param: reg_param, max_iter: max_iter)
@@ -60,7 +56,6 @@ module Rumale
         @params[:reg_param] = reg_param
         @params[:max_iter] = max_iter
         @params[:probability] = probability
-        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @weight_vec = nil
@@ -71,40 +66,40 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_training_samples, n_training_samples])
+      # @param x [Xumo::DFloat] (shape: [n_training_samples, n_training_samples])
       #   The kernel matrix of the training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_training_samples]) The labels to be used for fitting the model.
       # @return [KernelSVC] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
-        n_features = x.shape[1]
+        _n_samples, n_features = x.shape
 
         if n_classes > 2
-          @weight_vec = Numo::DFloat.zeros(n_classes, n_features)
-          @prob_param = Numo::DFloat.zeros(n_classes, 2)
-          models = if enable_parallel?
-                     # :nocov:
-                     parallel_map(n_classes) do |n|
-                       bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-                       partial_fit(x, bin_y)
-                     end
-                     # :nocov:
-                   else
-                     Array.new(n_classes) do |n|
-                       bin_y = Numo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-                       partial_fit(x, bin_y)
-                     end
-                   end
-          models.each_with_index { |model, n| @weight_vec[n, true], @prob_param[n, true] = model }
+          @weight_vec = Xumo::DFloat.zeros(n_classes, n_features)
+          @prob_param = Xumo::DFloat.zeros(n_classes, 2)
+          n_classes.times do |n|
+            bin_y = Xumo::Int32.cast(y.eq(@classes[n])) * 2 - 1
+            @weight_vec[n, true] = binary_fit(x, bin_y)
+            @prob_param[n, true] = if @params[:probability]
+                                     Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec[n, true].transpose), bin_y)
+                                   else
+                                     Xumo::DFloat[1, 0]
+                                   end
+          end
         else
           negative_label = y.to_a.uniq.min
-          bin_y = Numo::Int32.cast(y.ne(negative_label)) * 2 - 1
-          @weight_vec, @prob_param = partial_fit(x, bin_y)
+          bin_y = Xumo::Int32.cast(y.ne(negative_label)) * 2 - 1
+          @weight_vec = binary_fit(x, bin_y)
+          @prob_param = if @params[:probability]
+                          Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(@weight_vec.transpose), bin_y)
+                        else
+                          Xumo::DFloat[1, 0]
+                        end
         end
 
         self
@@ -112,9 +107,9 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
+      # @param x [Xumo::DFloat] (shape: [n_testing_samples, n_training_samples])
       #     The kernel matrix between testing samples and training samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
+      # @return [Xumo::DFloat] (shape: [n_testing_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
         x = check_convert_sample_array(x)
 
@@ -123,40 +118,35 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
+      # @param x [Xumo::DFloat] (shape: [n_testing_samples, n_training_samples])
       #     The kernel matrix between testing samples and training samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
+      # @return [Xumo::Int32] (shape: [n_testing_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
 
-        return Numo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
+        return Xumo::Int32.cast(decision_function(x).ge(0.0)) * 2 - 1 if @classes.size <= 2
 
         n_samples, = x.shape
         decision_values = decision_function(x)
-        predicted = if enable_parallel?
-                      parallel_map(n_samples) { |n| @classes[decision_values[n, true].max_index] }
-                    else
-                      Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
-                    end
-        Numo::Int32.asarray(predicted)
+        Xumo::Int32.asarray(Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index.to_i] })
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_testing_samples, n_training_samples])
+      # @param x [Xumo::DFloat] (shape: [n_testing_samples, n_training_samples])
       #     The kernel matrix between testing samples and training samples to predict the labels.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
 
         if @classes.size > 2
-          probs = 1.0 / (Numo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
+          probs = 1.0 / (Xumo::NMath.exp(@prob_param[true, 0] * decision_function(x) + @prob_param[true, 1]) + 1.0)
           return (probs.transpose / probs.sum(axis: 1)).transpose
         end
 
         n_samples, = x.shape
-        probs = Numo::DFloat.zeros(n_samples, 2)
-        probs[true, 1] = 1.0 / (Numo::NMath.exp(@prob_param[0] * decision_function(x) + @prob_param[1]) + 1.0)
+        probs = Xumo::DFloat.zeros(n_samples, 2)
+        probs[true, 1] = 1.0 / (Xumo::NMath.exp(@prob_param[0] * decision_function(x) + @prob_param[1]) + 1.0)
         probs[true, 0] = 1.0 - probs[true, 1]
         probs
       end
@@ -184,29 +174,22 @@ module Rumale
 
       private
 
-      def partial_fit(x, bin_y)
+      def binary_fit(x, bin_y)
         # Initialize some variables.
         n_training_samples = x.shape[0]
         rand_ids = []
-        weight_vec = Numo::DFloat.zeros(n_training_samples)
-        sub_rng = @rng.dup
+        weight_vec = Xumo::DFloat.zeros(n_training_samples)
         # Start optimization.
         @params[:max_iter].times do |t|
           # random sampling
-          rand_ids = [*0...n_training_samples].shuffle(random: sub_rng) if rand_ids.empty?
+          rand_ids = [*0...n_training_samples].shuffle(random: @rng) if rand_ids.empty?
           target_id = rand_ids.shift
           # update the weight vector
           func = (weight_vec * bin_y).dot(x[target_id, true].transpose).to_f
           func *= bin_y[target_id] / (@params[:reg_param] * (t + 1))
           weight_vec[target_id] += 1.0 if func < 1.0
         end
-        w = weight_vec * bin_y
-        p = if @params[:probability]
-              Rumale::ProbabilisticOutput.fit_sigmoid(x.dot(w), bin_y)
-            else
-              Numo::DFloat[1, 0]
-            end
-        [w, p]
+        weight_vec * bin_y
       end
     end
   end
