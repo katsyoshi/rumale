@@ -27,14 +27,14 @@ module Rumale
 
       # Calculate area under the receiver operation characteristic curve (ROC AUC).
       #
-      # @param y_true [Numo::Int32] (shape: [n_samples] or [n_samples, n_classes])
+      # @param y_true [Xumo::Int32] (shape: [n_samples] or [n_samples, n_classes])
       #   Ground truth binary labels or one-hot encoded multi-labels.
-      # @param y_score [Numo::DFloat] (shape: [n_samples] or [n_samples, n_classes])
+      # @param y_score [Xumo::DFloat] (shape: [n_samples] or [n_samples, n_classes])
       #   Predicted class probabilities or confidence scores.
       # @return [Float] (macro-averaged) ROC AUC.
       def score(y_true, y_score)
-        y_true = Numo::Int32.cast(y_true) unless y_true.is_a?(Numo::Int32)
-        y_score = Numo::DFloat.cast(y_score) unless y_score.is_a?(Numo::DFloat)
+        y_true = Xumo::Int32.cast(y_true) unless y_true.is_a?(Xumo::Int32)
+        y_score = Xumo::DFloat.cast(y_score) unless y_score.is_a?(Xumo::DFloat)
         raise ArgumentError, 'Expect to have the same shape for y_true and y_score.' unless y_true.shape == y_score.shape
 
         n_classes = y_score.shape[1]
@@ -53,15 +53,15 @@ module Rumale
 
       # Calculate receiver operation characteristic curve.
       #
-      # @param y_true [Numo::Int32] (shape: [n_samples]) Ground truth binary labels.
-      # @param y_score [Numo::DFloat] (shape: [n_samples]) Predicted class probabilities or confidence scores.
+      # @param y_true [Xumo::Int32] (shape: [n_samples]) Ground truth binary labels.
+      # @param y_score [Xumo::DFloat] (shape: [n_samples]) Predicted class probabilities or confidence scores.
       # @param pos_label [Integer] Label to be a positive label when binarizing the given labels.
       #   If nil is given, the method considers the maximum value of the label as a positive label.
-      # @return [Array] fpr (Numo::DFloat): false positive rates. tpr (Numo::DFloat): true positive rates.
-      #   thresholds (Numo::DFloat): thresholds on the decision function used to calculate fpr and tpr.
+      # @return [Array] fpr (Xumo::DFloat): false positive rates. tpr (Xumo::DFloat): true positive rates.
+      #   thresholds (Xumo::DFloat): thresholds on the decision function used to calculate fpr and tpr.
       def roc_curve(y_true, y_score, pos_label = nil)
-        y_true = Numo::Int32.cast(y_true) unless y_true.is_a?(Numo::Int32)
-        y_score = Numo::DFloat.cast(y_score) unless y_score.is_a?(Numo::DFloat)
+        y_true = Xumo::Int32.cast(y_true) unless y_true.is_a?(Xumo::Int32)
+        y_score = Xumo::DFloat.cast(y_score) unless y_score.is_a?(Xumo::DFloat)
         raise ArgumentError, 'Expect y_true to be 1-D arrray.' unless y_true.shape[1].nil?
         raise ArgumentError, 'Expect y_score to be 1-D arrray.' unless y_score.shape[1].nil?
         labels = y_true.to_a.uniq
@@ -87,13 +87,13 @@ module Rumale
 
       # Calculate area under the curve using the trapezoidal rule.
       #
-      # @param x [Numo::Int32/Numo::DFloat] (shape: [n_elements])
+      # @param x [Xumo::Int32/Xumo::DFloat] (shape: [n_elements])
       #   x coordinates. These are expected to monotonously increase or decrease.
-      # @param y [Numo::Int32/Numo::DFloat] (shape: [n_elements]) y coordinates.
+      # @param y [Xumo::Int32/Xumo::DFloat] (shape: [n_elements]) y coordinates.
       # @return [Float] area under the curve.
       def auc(x, y)
-        x = Numo::NArray.asarray(x) unless x.is_a?(Numo::NArray)
-        y = Numo::NArray.asarray(y) unless y.is_a?(Numo::NArray)
+        x = Xumo::NArray.asarray(x) unless x.is_a?(Xumo::NArray)
+        y = Xumo::NArray.asarray(y) unless y.is_a?(Xumo::NArray)
         raise ArgumentError, 'Expect x to be 1-D arrray.' unless x.shape[1].nil?
         raise ArgumentError, 'Expect y to be 1-D arrray.' unless y.shape[1].nil?
         n_samples = [x.shape[0], y.shape[0]].min
@@ -109,7 +109,7 @@ module Rumale
         bin_y_true = y_true.eq(pos_label)
         desc_pred_ids = y_score.sort_index.reverse
 
-        desc_y_true = Numo::Int32.cast(bin_y_true[desc_pred_ids])
+        desc_y_true = Xumo::Int32.cast(bin_y_true[desc_pred_ids])
         desc_y_score = y_score[desc_pred_ids]
 
         dist_value_ids = desc_y_score.diff.ne(0).where
