@@ -24,9 +24,9 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
     expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(2)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_bin, y_bin)).to eq(1.0)
@@ -38,9 +38,9 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators.size).to eq(n_estimators)
     expect(estimator.estimators[0].class).to eq(Rumale::Tree::DecisionTreeClassifier)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(3)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_mlt, y_mlt)).to eq(1.0)
@@ -50,11 +50,11 @@ RSpec.describe Rumale::Ensemble::RandomForestClassifier do
     n_samples, = x_mlt.shape
     estimator.fit(x_mlt, y_mlt)
     probs = estimator.predict_proba(x_mlt)
-    expect(probs.class).to eq(Numo::DFloat)
+    expect(probs.class).to eq(Xumo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(3)
     classes = y_mlt.to_a.uniq.sort
-    predicted = Numo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })
+    predicted = Xumo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index.to_i] })
     expect(predicted).to eq(y_mlt)
   end
 

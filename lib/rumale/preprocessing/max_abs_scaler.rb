@@ -16,7 +16,7 @@ module Rumale
       include Base::Transformer
 
       # Return the vector consists of the maximum absolute value for each feature.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :max_abs_vec
 
       # Creates a new normalizer for scaling each feature with its maximum absolute value.
@@ -29,7 +29,7 @@ module Rumale
       #
       # @overload fit(x) -> MaxAbsScaler
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
       # @return [MaxAbsScaler]
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -39,10 +39,10 @@ module Rumale
 
       # Calculate the maximum absolute value for each feature, and then normalize samples.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
-      # @return [Numo::DFloat] The scaled samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate maximum absolute value for each feature.
+      # @return [Xumo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x).transform(x)
@@ -50,8 +50,8 @@ module Rumale
 
       # Perform scaling the given samples with maximum absolute value for each feature.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
-      # @return [Numo::DFloat] The scaled samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
+      # @return [Xumo::DFloat] The scaled samples.
       def transform(x)
         x = check_convert_sample_array(x)
         x / @max_abs_vec

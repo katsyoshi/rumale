@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Rumale::Tree::ExtraTreeRegressor do
   let(:x) { two_clusters_dataset[0] }
   let(:y) { x[true, 0] + x[true, 1]**2 }
-  let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
+  let(:y_mult) { Xumo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Xumo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
   let(:min_samples_leaf) { 1 }
@@ -22,15 +22,15 @@ RSpec.describe Rumale::Tree::ExtraTreeRegressor do
     estimator.fit(x, y)
 
     expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
-    expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+    expect(estimator.leaf_values.class).to eq(Xumo::DFloat)
     expect(estimator.leaf_values.shape[0]).not_to be_zero
     expect(estimator.leaf_values.shape[1]).to be_nil
 
     predicted = estimator.predict(x)
-    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.class).to eq(Xumo::DFloat)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to be_nil
     expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
@@ -43,15 +43,15 @@ RSpec.describe Rumale::Tree::ExtraTreeRegressor do
     estimator.fit(x, y_mult)
 
     expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
-    expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+    expect(estimator.leaf_values.class).to eq(Xumo::DFloat)
     expect(estimator.leaf_values.shape[0]).not_to be_zero
     expect(estimator.leaf_values.shape[1]).to eq(n_outputs)
 
     predicted = estimator.predict(x)
-    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.class).to eq(Xumo::DFloat)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to eq(n_outputs)
     expect(estimator.score(x, y_mult)).to be_within(0.01).of(1.0)

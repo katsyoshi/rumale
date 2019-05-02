@@ -26,11 +26,11 @@ module Rumale
       attr_reader :estimators
 
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the random generator for random selection of feature index.
@@ -48,10 +48,6 @@ module Rumale
       # @param min_samples_leaf [Integer] The minimum number of samples at a leaf node.
       # @param max_features [Integer] The number of features to consider when searching optimal split point.
       #   If nil is given, split process considers all features.
-      # @param n_jobs [Integer] The number of jobs for running the fit method in parallel.
-      #   If nil is given, the method does not execute in parallel.
-      #   If zero or less is given, it becomes equal to the number of processors.
-      #   This parameter is ignored if the Parallel gem is not loaded.
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       #   It is used to randomly determine the order of features when deciding spliting point.
       def initialize(n_estimators: 10,
@@ -71,7 +67,6 @@ module Rumale
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
         @params[:max_features] = max_features
-        @params[:n_jobs] = n_jobs
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
         @estimators = nil
@@ -82,8 +77,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [RandomForestClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -93,38 +88,28 @@ module Rumale
         n_samples, n_features = x.shape
         @params[:max_features] = Math.sqrt(n_features).to_i unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
-        @classes = Numo::Int32.asarray(y.to_a.uniq.sort)
-        sub_rng = @rng.dup
-        rngs = Array.new(@params[:n_estimators]) { Random.new(sub_rng.rand(Rumale::Values.int_max)) }
+        @classes = Xumo::Int32.asarray(y.to_a.uniq.sort)
+        @feature_importances = Xumo::DFloat.zeros(n_features)
         # Construct forest.
-        @estimators =
-          if enable_parallel?
-            # :nocov:
-            parallel_map(@params[:n_estimators]) do |n|
-              bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
-              plant_tree(rngs[n].rand(Rumale::Values.int_max)).fit(x[bootstrap_ids, true], y[bootstrap_ids])
-            end
-            # :nocov:
-          else
-            Array.new(@params[:n_estimators]) do |n|
-              bootstrap_ids = Array.new(n_samples) { rngs[n].rand(0...n_samples) }
-              plant_tree(rngs[n].rand(Rumale::Values.int_max)).fit(x[bootstrap_ids, true], y[bootstrap_ids])
-            end
-          end
-        @feature_importances =
-          if enable_parallel?
-            parallel_map(@params[:n_estimators]) { |n| @estimators[n].feature_importances }.reduce(&:+)
-          else
-            @estimators.map(&:feature_importances).reduce(&:+)
-          end
+        @estimators = Array.new(@params[:n_estimators]) do
+          tree = Tree::DecisionTreeClassifier.new(
+            criterion: @params[:criterion], max_depth: @params[:max_depth],
+            max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
+            max_features: @params[:max_features], random_seed: @rng.rand(Rumale::Values.int_max)
+          )
+          bootstrap_ids = Array.new(n_samples) { @rng.rand(0...n_samples) }
+          tree.fit(x[bootstrap_ids, true], y[bootstrap_ids])
+          @feature_importances += tree.feature_importances
+          tree
+        end
         @feature_importances /= @feature_importances.sum
         self
       end
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples = x.shape[0]
@@ -136,13 +121,13 @@ module Rumale
                       predict_set = @estimators.map { |tree| tree.predict(x).to_a }.transpose
                       Array.new(n_samples) { |n| predict_set[n].group_by { |v| v }.max_by { |_k, v| v.size }.first }
                     end
-        Numo::Int32.asarray(predicted)
+        Xumo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
         n_estimators = @estimators.size
@@ -151,15 +136,16 @@ module Rumale
         else
           @estimators.map { |tree| predict_proba_tree(tree, x) }.reduce(&:+) / n_estimators
         end
+        (ballot_box.transpose / ballot_box.sum(axis: 1)).transpose
       end
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
+        Xumo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 
       # Dump marshal data.
@@ -181,29 +167,6 @@ module Rumale
         @feature_importances = obj[:feature_importances]
         @rng = obj[:rng]
         nil
-      end
-
-      private
-
-      def plant_tree(rnd_seed)
-        Tree::DecisionTreeClassifier.new(
-          criterion: @params[:criterion], max_depth: @params[:max_depth],
-          max_leaf_nodes: @params[:max_leaf_nodes], min_samples_leaf: @params[:min_samples_leaf],
-          max_features: @params[:max_features], random_seed: rnd_seed
-        )
-      end
-
-      def predict_proba_tree(tree, x)
-        # initialize some variables.
-        n_samples = x.shape[0]
-        base_classes = @classes.to_a
-        n_classes = base_classes.size
-        class_ids = tree.classes.map { |c| base_classes.index(c) }
-        # predict probabilities.
-        probs = Numo::DFloat.zeros(n_samples, n_classes)
-        tree_probs = tree.predict_proba(x)
-        class_ids.each_with_index { |i, j| probs[true, i] = tree_probs[true, j] }
-        probs
       end
     end
   end

@@ -10,8 +10,8 @@ RSpec.describe Rumale::ModelSelection::StratifiedShuffleSplit do
   let(:train_size) { 0.6 }
   let(:n_test_samples) { (n_samples * test_size).to_i }
   let(:n_train_samples) { (n_samples * train_size).to_i }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
-  let(:labels) { Numo::Int32[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
+  let(:labels) { Xumo::Int32[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3] }
 
   it 'splits the dataset with given test and train sizes.' do
     splitter = described_class.new(n_splits: n_splits, test_size: test_size, train_size: train_size, random_seed: 1)

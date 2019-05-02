@@ -17,7 +17,7 @@ module Rumale
     # - P. Geurts, D. Ernst, and L. Wehenkel, "Extremely randomized trees," Machine Learning, vol. 63 (1), pp. 3--42, 2006.
     class ExtraTreeRegressor < DecisionTreeRegressor
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the learned tree.
@@ -29,7 +29,7 @@ module Rumale
       attr_reader :rng
 
       # Return the values assigned each leaf.
-      # @return [Numo::DFloat] (shape: [n_leafs, n_outputs])
+      # @return [Xumo::DFloat] (shape: [n_leafs, n_outputs])
       attr_reader :leaf_values
 
       # Create a new regressor with extra randomized tree algorithm.
@@ -57,8 +57,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
       # @return [ExtraTreeRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -69,8 +69,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         super

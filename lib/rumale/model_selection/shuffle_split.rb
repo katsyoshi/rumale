@@ -47,7 +47,7 @@ module Rumale
 
       # Generate data indices for random permutation cross validation.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features])
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features])
       #   The dataset to be used to generate data indices for random permutation cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, _y = nil)

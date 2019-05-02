@@ -32,12 +32,12 @@ RSpec.describe Rumale::ModelSelection::GridSearchCV do
     n_samples, = x.shape
     classes = y.to_a.uniq.sort
     probs = gs.predict_proba(x)
-    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })]
+    predicted = Xumo::Int32[*(Array.new(n_samples) { |n| classes[probs[n, true].max_index.to_i] })]
     expect(probs.shape).to match([n_samples, 3])
     expect(predicted).to eq(y)
 
     log_probs = gs.predict_log_proba(x)
-    predicted = Numo::Int32[*(Array.new(n_samples) { |n| classes[log_probs[n, true].max_index] })]
+    predicted = Xumo::Int32[*(Array.new(n_samples) { |n| classes[log_probs[n, true].max_index.to_i] })]
     expect(log_probs.shape).to match([n_samples, 3])
     expect(predicted).to eq(y)
   end

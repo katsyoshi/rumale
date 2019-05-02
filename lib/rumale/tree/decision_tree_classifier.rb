@@ -20,11 +20,11 @@ module Rumale
       include ExtDecisionTreeClassifier
 
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the learned tree.
@@ -36,7 +36,7 @@ module Rumale
       attr_reader :rng
 
       # Return the labels assigned each leaf.
-      # @return [Numo::Int32] (size: n_leafs)
+      # @return [Xumo::Int32] (size: n_leafs)
       attr_reader :leaf_labels
 
       # Create a new classifier with decision tree algorithm.
@@ -65,8 +65,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [DecisionTreeClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -76,20 +76,20 @@ module Rumale
         @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = [@params[:max_features], n_features].min
         uniq_y = y.to_a.uniq.sort
-        @classes = Numo::Int32.asarray(uniq_y)
+        @classes = Xumo::Int32.asarray(uniq_y)
         @n_leaves = 0
         @leaf_labels = []
         @sub_rng = @rng.dup
         build_tree(x, y.map { |v| uniq_y.index(v) })
         eval_importance(n_samples, n_features)
-        @leaf_labels = Numo::Int32[*@leaf_labels]
+        @leaf_labels = Xumo::Int32[*@leaf_labels]
         self
       end
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         @leaf_labels[apply(x)].dup
@@ -97,11 +97,11 @@ module Rumale
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
-        Numo::DFloat[*(Array.new(x.shape[0]) { |n| predict_proba_at_node(@tree, x[n, true]) })]
+        Xumo::DFloat[*(Array.new(x.shape[0]) { |n| predict_proba_at_node(@tree, x[n, true]) })]
       end
 
       # Dump marshal data.

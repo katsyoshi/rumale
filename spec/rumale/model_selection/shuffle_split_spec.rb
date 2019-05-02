@@ -10,7 +10,7 @@ RSpec.describe Rumale::ModelSelection::ShuffleSplit do
   let(:train_size) { 0.6 }
   let(:n_test_samples) { (n_samples * test_size).to_i }
   let(:n_train_samples) { (n_samples * train_size).to_i }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
   let(:labels) { nil }
 
   it 'splits the dataset with given test and train sizes.' do
