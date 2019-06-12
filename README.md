@@ -1,10 +1,6 @@
 # Rumale
 
-<<<<<<< HEAD
 ![Rumale](https://dl.dropboxusercontent.com/s/joxruk2720ur66o/rumale_header_400.png)
-=======
-<img src="https://user-images.githubusercontent.com/5562409/56179541-0d12fe00-6041-11e9-8aad-7cea23eadecc.png" width="400"/>
->>>>>>> :memo: Add logo image to README
 
 [![Build Status](https://travis-ci.org/yoshoku/rumale.svg?branch=master)](https://travis-ci.org/yoshoku/rumale)
 [![Coverage Status](https://coveralls.io/repos/github/yoshoku/rumale/badge.svg?branch=master)](https://coveralls.io/github/yoshoku/rumale?branch=master)
