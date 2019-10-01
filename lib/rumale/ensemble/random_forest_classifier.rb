@@ -66,6 +66,7 @@ module Rumale
         @params[:max_depth] = max_depth
         @params[:max_leaf_nodes] = max_leaf_nodes
         @params[:min_samples_leaf] = min_samples_leaf
+        @params[:n_jobs] = n_jobs
         @params[:max_features] = max_features
         @params[:random_seed] = random_seed
         @params[:random_seed] ||= srand
