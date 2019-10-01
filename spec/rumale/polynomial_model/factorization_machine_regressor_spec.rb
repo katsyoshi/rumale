@@ -4,8 +4,8 @@ require 'spec_helper'
 
 RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
   let(:x) { two_clusters_dataset[0] }
-  let(:single_target) { x.dot(Numo::DFloat[0.8, 0.2]) }
-  let(:multi_target) { x.dot(Numo::DFloat[[0.8, 0.82], [0.2, 0.18]]) }
+  let(:single_target) { x.dot(Xumo::DFloat[0.8, 0.2]) }
+  let(:multi_target) { x.dot(Xumo::DFloat[[0.8, 0.82], [0.2, 0.18]]) }
   let(:n_factors) { 2 }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
@@ -61,19 +61,19 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
     let(:y) { multi_target }
 
     it 'learns the model for multiple-regression problem.', :aggregate_failures do
-      expect(estimator.factor_mat.class).to eq(Numo::DFloat)
+      expect(estimator.factor_mat.class).to eq(Xumo::DFloat)
       expect(estimator.factor_mat.ndim).to eq(3)
       expect(estimator.factor_mat.shape[0]).to eq(n_outputs)
       expect(estimator.factor_mat.shape[1]).to eq(n_factors)
       expect(estimator.factor_mat.shape[2]).to eq(n_features)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(estimator.bias_term.class).to eq(Numo::DFloat)
+      expect(estimator.bias_term.class).to eq(Xumo::DFloat)
       expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -84,19 +84,19 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
       let(:n_jobs) { -1 }
 
       it 'learns the model for multiple-regression problem in parallel.', :aggregate_failures do
-        expect(estimator.factor_mat.class).to eq(Numo::DFloat)
+        expect(estimator.factor_mat.class).to eq(Xumo::DFloat)
         expect(estimator.factor_mat.ndim).to eq(3)
         expect(estimator.factor_mat.shape[0]).to eq(n_outputs)
         expect(estimator.factor_mat.shape[1]).to eq(n_factors)
         expect(estimator.factor_mat.shape[2]).to eq(n_features)
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_features)
         expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-        expect(estimator.bias_term.class).to eq(Numo::DFloat)
+        expect(estimator.bias_term.class).to eq(Xumo::DFloat)
         expect(estimator.bias_term.ndim).to eq(1)
         expect(estimator.bias_term.shape[0]).to eq(n_outputs)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted.class).to eq(Xumo::DFloat)
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)

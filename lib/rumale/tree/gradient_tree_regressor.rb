@@ -22,7 +22,7 @@ module Rumale
 
       # Return the importance for each feature.
       # The feature importances are calculated based on the numbers of times the feature is used for splitting.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :feature_importances
 
       # Return the learned tree.
@@ -34,7 +34,7 @@ module Rumale
       attr_reader :rng
 
       # Return the values assigned each leaf.
-      # @return [Numo::DFloat] (shape: [n_leaves])
+      # @return [Xumo::DFloat] (shape: [n_leaves])
       attr_reader :leaf_weights
 
       # Initialize a gradient tree regressor
@@ -76,10 +76,10 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples]) The taget values to be used for fitting the model.
-      # @param g [Numo::DFloat] (shape: [n_samples]) The gradient of loss function.
-      # @param h [Numo::DFloat] (shape: [n_samples]) The hessian of loss function.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples]) The taget values to be used for fitting the model.
+      # @param g [Xumo::DFloat] (shape: [n_samples]) The gradient of loss function.
+      # @param h [Xumo::DFloat] (shape: [n_samples]) The hessian of loss function.
       # @return [GradientTreeRegressor] The learned regressor itself.
       def fit(x, y, g, h)
         x = check_convert_sample_array(x)
@@ -92,18 +92,18 @@ module Rumale
         @params[:max_features] ||= n_features
         @n_leaves = 0
         @leaf_weights = []
-        @feature_importances = Numo::DFloat.zeros(n_features)
+        @feature_importances = Xumo::DFloat.zeros(n_features)
         @sub_rng = @rng.dup
         # Build tree.
         build_tree(x, y, g, h)
-        @leaf_weights = Numo::DFloat[*@leaf_weights]
+        @leaf_weights = Xumo::DFloat[*@leaf_weights]
         self
       end
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (size: n_samples) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (size: n_samples) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         @leaf_weights[apply(x)].dup
@@ -111,11 +111,11 @@ module Rumale
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
+        Xumo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 
       # Dump marshal data.

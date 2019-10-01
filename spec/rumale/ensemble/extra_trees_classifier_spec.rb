@@ -52,9 +52,9 @@ RSpec.describe Rumale::Ensemble::ExtraTreesClassifier do
     expect(estimator_parallel.estimators.class).to eq(Array)
     expect(estimator_parallel.estimators.size).to eq(n_estimators)
     expect(estimator_parallel.estimators[0].class).to eq(Rumale::Tree::ExtraTreeClassifier)
-    expect(estimator_parallel.classes.class).to eq(Numo::Int32)
+    expect(estimator_parallel.classes.class).to eq(Xumo::Int32)
     expect(estimator_parallel.classes.size).to eq(3)
-    expect(estimator_parallel.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
     expect(estimator_parallel.feature_importances.shape[1]).to be_nil
     expect(estimator_parallel.score(x_mlt, y_mlt)).to eq(1.0)

@@ -23,15 +23,15 @@ module Rumale
       include Base::Regressor
 
       # Return the factor matrix for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_factors, n_features])
+      # @return [Xumo::DFloat] (shape: [n_outputs, n_factors, n_features])
       attr_reader :factor_mat
 
       # Return the weight vector for Factorization Machine.
-      # @return [Numo::DFloat] (shape: [n_outputs, n_features])
+      # @return [Xumo::DFloat] (shape: [n_outputs, n_features])
       attr_reader :weight_vec
 
       # Return the bias term for Factoriazation Machine.
-      # @return [Numo::DFloat] (shape: [n_outputs])
+      # @return [Xumo::DFloat] (shape: [n_outputs])
       attr_reader :bias_term
 
       # Return the random generator for random sampling.
@@ -65,8 +65,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [FactorizationMachineRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -77,9 +77,9 @@ module Rumale
         _n_samples, n_features = x.shape
 
         if n_outputs > 1
-          @factor_mat = Numo::DFloat.zeros(n_outputs, @params[:n_factors], n_features)
-          @weight_vec = Numo::DFloat.zeros(n_outputs, n_features)
-          @bias_term = Numo::DFloat.zeros(n_outputs)
+          @factor_mat = Xumo::DFloat.zeros(n_outputs, @params[:n_factors], n_features)
+          @weight_vec = Xumo::DFloat.zeros(n_outputs, n_features)
+          @bias_term = Xumo::DFloat.zeros(n_outputs)
           if enable_parallel?
             models = parallel_map(n_outputs) { |n| partial_fit(x, y[true, n]) }
             n_outputs.times { |n| @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = models[n] }
@@ -95,8 +95,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         linear_term = @bias_term + x.dot(@weight_vec.transpose)

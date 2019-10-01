@@ -17,8 +17,8 @@ module Rumale
 
       # Calculate purity
       #
-      # @param y_true [Numo::Int32] (shape: [n_samples]) Ground truth labels.
-      # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted cluster labels.
+      # @param y_true [Xumo::Int32] (shape: [n_samples]) Ground truth labels.
+      # @param y_pred [Xumo::Int32] (shape: [n_samples]) Predicted cluster labels.
       # @return [Float] Purity
       def score(y_true, y_pred)
         y_true = check_convert_label_array(y_true)

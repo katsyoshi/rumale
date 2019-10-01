@@ -32,12 +32,12 @@ module Rumale
       attr_reader :estimators
 
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the importance for each feature.
       # The feature importances are calculated based on the numbers of times the feature is used for splitting.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the random generator for random selection of feature index.
@@ -93,8 +93,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [GradientBoostingClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -104,7 +104,7 @@ module Rumale
         n_features = x.shape[1]
         @params[:max_features] = n_features if @params[:max_features].nil?
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
         n_classes = @classes.size
         # train estimator.
         if n_classes > 2
@@ -112,9 +112,9 @@ module Rumale
           @estimators = multiclass_estimators(x, y)
         else
           negative_label = y.to_a.uniq.min
-          bin_y = Numo::DFloat.cast(y.ne(negative_label)) * 2 - 1
+          bin_y = Xumo::DFloat.cast(y.ne(negative_label)) * 2 - 1
           y_mean = bin_y.mean
-          @base_predictions = 0.5 * Numo::NMath.log((1.0 + y_mean) / (1.0 - y_mean))
+          @base_predictions = 0.5 * Xumo::NMath.log((1.0 + y_mean) / (1.0 - y_mean))
           @estimators = partial_fit(x, bin_y, @base_predictions)
         end
         # calculate feature importances.
@@ -128,8 +128,8 @@ module Rumale
 
       # Calculate confidence scores for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Confidence score per sample.
       def decision_function(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
@@ -142,28 +142,28 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples = x.shape[0]
         probs = predict_proba(x)
-        Numo::Int32.asarray(Array.new(n_samples) { |n| @classes[probs[n, true].max_index] })
+        Xumo::Int32.asarray(Array.new(n_samples) { |n| @classes[probs[n, true].max_index] })
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
 
-        proba = 1.0 / (Numo::NMath.exp(-decision_function(x)) + 1.0)
+        proba = 1.0 / (Xumo::NMath.exp(-decision_function(x)) + 1.0)
 
         return (proba.transpose / proba.sum(axis: 1)).transpose if @classes.size > 2
 
         n_samples, = x.shape
-        probs = Numo::DFloat.zeros(n_samples, 2)
+        probs = Xumo::DFloat.zeros(n_samples, 2)
         probs[true, 1] = proba
         probs[true, 0] = 1.0 - proba
         probs
@@ -171,8 +171,8 @@ module Rumale
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples, n_estimators, n_classes]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples, n_estimators, n_classes]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
         n_classes = @classes.size
@@ -181,7 +181,7 @@ module Rumale
                    else
                      @estimators.map { |tree| tree.apply(x) }
                    end
-        Numo::Int32[*leaf_ids].transpose
+        Xumo::Int32[*leaf_ids].transpose
       end
 
       # Dump marshal data.
@@ -215,7 +215,7 @@ module Rumale
         n_samples = x.shape[0]
         n_sub_samples = [n_samples, [(n_samples * @params[:subsample]).to_i, 1].max].min
         whole_ids = Array.new(n_samples) { |v| v }
-        y_pred = Numo::DFloat.ones(n_samples) * init_pred
+        y_pred = Xumo::DFloat.ones(n_samples) * init_pred
         sub_rng = @rng.dup
         # grow trees.
         @params[:n_estimators].times do |_t|
@@ -240,12 +240,12 @@ module Rumale
       #
       # def loss(y_true, y_pred)
       #   # y_true in {-1, 1}
-      #   Numo::NMath.log(1.0 + Numo::NMath.exp(-2.0 * y_true * y_pred)).mean
+      #   Xumo::NMath.log(1.0 + Xumo::NMath.exp(-2.0 * y_true * y_pred)).mean
       # end
 
       def gradient(y_true, y_pred)
         # y in {-1, 1}
-        -2.0 * y_true / (1.0 + Numo::NMath.exp(2.0 * y_true * y_pred))
+        -2.0 * y_true / (1.0 + Xumo::NMath.exp(2.0 * y_true * y_pred))
       end
 
       def hessian(y_true, y_pred)
@@ -267,19 +267,19 @@ module Rumale
         b = if enable_parallel?
               # :nocov:
               parallel_map(n_classes) do |n|
-                bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+                bin_y = Xumo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
                 y_mean = bin_y.mean
                 0.5 * Math.log((1.0 + y_mean) / (1.0 - y_mean))
               end
               # :nocov:
             else
               Array.new(n_classes) do |n|
-                bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+                bin_y = Xumo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
                 y_mean = bin_y.mean
                 0.5 * Math.log((1.0 + y_mean) / (1.0 - y_mean))
               end
             end
-        Numo::DFloat.asarray(b)
+        Xumo::DFloat.asarray(b)
       end
 
       def multiclass_estimators(x, y)
@@ -287,13 +287,13 @@ module Rumale
         if enable_parallel?
           # :nocov:
           parallel_map(n_classes) do |n|
-            bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+            bin_y = Xumo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
             partial_fit(x, bin_y, @base_predictions[n])
           end
           # :nocov:
         else
           Array.new(n_classes) do |n|
-            bin_y = Numo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
+            bin_y = Xumo::DFloat.cast(y.eq(@classes[n])) * 2 - 1
             partial_fit(x, bin_y, @base_predictions[n])
           end
         end
@@ -321,7 +321,7 @@ module Rumale
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
               end
             end
-        Numo::DFloat.asarray(s).transpose + @base_predictions
+        Xumo::DFloat.asarray(s).transpose + @base_predictions
       end
     end
   end

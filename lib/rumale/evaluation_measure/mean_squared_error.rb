@@ -14,8 +14,8 @@ module Rumale
 
       # Calculate mean squared error.
       #
-      # @param y_true [Numo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
-      # @param y_pred [Numo::DFloat] (shape: [n_samples, n_outputs]) Estimated target values.
+      # @param y_true [Xumo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
+      # @param y_pred [Xumo::DFloat] (shape: [n_samples, n_outputs]) Estimated target values.
       # @return [Float] Mean squared error
       def score(y_true, y_pred)
         y_true = check_convert_tvalue_array(y_true)

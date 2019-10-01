@@ -16,16 +16,16 @@ RSpec.describe Rumale::Clustering::SpectralClustering do
     let(:copied) { Marshal.load(Marshal.dump(analyzer.fit(x))) }
 
     it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(2).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding.class).to eq(Xumo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to eq(n_clusters)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.class).to eq(Xumo::Int32)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
@@ -50,15 +50,15 @@ RSpec.describe Rumale::Clustering::SpectralClustering do
     let(:n_clusters) { 2 }
 
     it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding.class).to eq(Xumo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to eq(n_clusters)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.class).to eq(Xumo::Int32)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)
@@ -74,15 +74,15 @@ RSpec.describe Rumale::Clustering::SpectralClustering do
     let(:n_clusters) { 2 }
 
     it 'analyzes clusters.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(n_cluster_samples)
       expect(cluster_labels.eq(1).count).to eq(n_cluster_samples)
-      expect(analyzer.embedding.class).to eq(Numo::DFloat)
+      expect(analyzer.embedding.class).to eq(Xumo::DFloat)
       expect(analyzer.embedding.shape[0]).to eq(n_samples)
       expect(analyzer.embedding.shape[1]).to eq(n_clusters)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.class).to eq(Xumo::Int32)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
       expect(analyzer.labels.eq(0).count).to eq(n_cluster_samples)

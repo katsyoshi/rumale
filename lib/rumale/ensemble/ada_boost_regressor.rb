@@ -29,11 +29,11 @@ module Rumale
       attr_reader :estimators
 
       # Return the weight for each weak learner.
-      # @return [Numo::DFloat] (size: n_estimates)
+      # @return [Xumo::DFloat] (size: n_estimates)
       attr_reader :estimator_weights
 
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the random generator for random selection of feature index.
@@ -85,8 +85,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
       # @return [AdaBoostRegressor] The learned regressor itself.
       def fit(x, y) # rubocop:disable Metrics/AbcSize
         x = check_convert_sample_array(x)
@@ -98,10 +98,10 @@ module Rumale
         n_samples, n_features = x.shape
         @params[:max_features] = n_features unless @params[:max_features].is_a?(Integer)
         @params[:max_features] = [[1, @params[:max_features]].max, n_features].min
-        observation_weights = Numo::DFloat.zeros(n_samples) + 1.fdiv(n_samples)
+        observation_weights = Xumo::DFloat.zeros(n_samples) + 1.fdiv(n_samples)
         @estimators = []
         @estimator_weights = []
-        @feature_importances = Numo::DFloat.zeros(n_features)
+        @feature_importances = Xumo::DFloat.zeros(n_features)
         sub_rng = @rng.dup
         # Construct forest.
         @params[:n_estimators].times do |_t|
@@ -126,7 +126,7 @@ module Rumale
           @estimator_weights.push(weight)
           @feature_importances += weight * tree.feature_importances
           # Update observation weights.
-          update = Numo::DFloat.ones(n_samples)
+          update = Xumo::DFloat.ones(n_samples)
           update[abs_err.le(@params[:threshold])] = beta
           observation_weights *= update
           observation_weights = observation_weights.clip(1.0e-15, nil)
@@ -134,19 +134,19 @@ module Rumale
           break if sum_observation_weights.zero?
           observation_weights /= sum_observation_weights
         end
-        @estimator_weights = Numo::DFloat.asarray(@estimator_weights)
+        @estimator_weights = Xumo::DFloat.asarray(@estimator_weights)
         @feature_importances /= @estimator_weights.sum
         self
       end
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted value per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted value per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples, = x.shape
-        predictions = Numo::DFloat.zeros(n_samples)
+        predictions = Xumo::DFloat.zeros(n_samples)
         @estimators.size.times do |t|
           predictions += @estimator_weights[t] * @estimators[t].predict(x)
         end

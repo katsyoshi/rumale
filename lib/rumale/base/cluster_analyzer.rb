@@ -16,8 +16,8 @@ module Rumale
 
       # Calculate purity of clustering result.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
-      # @param y [Numo::Int32] (shape: [n_samples]) True labels for testing data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) Testing data.
+      # @param y [Xumo::Int32] (shape: [n_samples]) True labels for testing data.
       # @return [Float] Purity
       def score(x, y)
         x = check_convert_sample_array(x)

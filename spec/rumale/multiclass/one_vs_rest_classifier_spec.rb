@@ -15,17 +15,17 @@ RSpec.describe Rumale::Multiclass::OneVsRestClassifier do
     estimator.fit(samples, labels)
 
     expect(estimator.estimators.size).to eq(n_classes)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.shape[0]).to eq(n_classes)
     expect(estimator.classes.shape[1]).to be_nil
 
     func_vals = estimator.decision_function(samples)
-    expect(func_vals.class).to eq(Numo::DFloat)
+    expect(func_vals.class).to eq(Xumo::DFloat)
     expect(func_vals.shape[0]).to eq(n_samples)
     expect(func_vals.shape[1]).to eq(n_classes)
 
     predicted = estimator.predict(samples)
-    expect(predicted.class).to eq(Numo::Int32)
+    expect(predicted.class).to eq(Xumo::Int32)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to be_nil
     expect(predicted).to eq(labels)

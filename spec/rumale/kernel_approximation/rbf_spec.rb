@@ -6,9 +6,9 @@ RSpec.describe Rumale::KernelApproximation::RBF do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
   let(:n_components) { 4096 }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
   let(:kernel_matrix) do
-    kernel_matrix = Numo::DFloat.zeros(n_samples, n_samples)
+    kernel_matrix = Xumo::DFloat.zeros(n_samples, n_samples)
     n_samples.times do |m|
       n_samples.times do |n|
         distance = Math.sqrt(((samples[m, true] - samples[n, true])**2).sum)
@@ -32,10 +32,10 @@ RSpec.describe Rumale::KernelApproximation::RBF do
     end
     mean_error /= n_samples * n_samples
     expect(mean_error).to be < 0.01
-    expect(transformer.random_mat.class).to eq(Numo::DFloat)
+    expect(transformer.random_mat.class).to eq(Xumo::DFloat)
     expect(transformer.random_mat.shape[0]).to eq(n_features)
     expect(transformer.random_mat.shape[1]).to eq(n_components)
-    expect(transformer.random_vec.class).to eq(Numo::DFloat)
+    expect(transformer.random_vec.class).to eq(Xumo::DFloat)
     expect(transformer.random_vec.shape[0]).to eq(n_components)
     expect(transformer.random_vec.shape[1]).to be_nil
   end

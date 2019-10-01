@@ -18,8 +18,8 @@ module Rumale
 
       # Calculate the coefficient of determination.
       #
-      # @param y_true [Numo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
-      # @param y_pred [Numo::DFloat] (shape: [n_samples, n_outputs]) Estimated taget values.
+      # @param y_true [Xumo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
+      # @param y_pred [Xumo::DFloat] (shape: [n_samples, n_outputs]) Estimated taget values.
       # @return [Float] Coefficient of determination
       def score(y_true, y_pred)
         y_true = check_convert_tvalue_array(y_true)

@@ -17,11 +17,11 @@ RSpec.describe Rumale::Decomposition::NMF do
   it 'decomposes non-negative matrix.' do
     x_coef = decomposer.fit_transform(x)
 
-    expect(x_coef.class).to eq(Numo::DFloat)
+    expect(x_coef.class).to eq(Xumo::DFloat)
     expect(x_coef.shape[0]).to eq(n_samples)
     expect(x_coef.shape[1]).to eq(n_components)
 
-    expect(decomposer.components.class).to eq(Numo::DFloat)
+    expect(decomposer.components.class).to eq(Xumo::DFloat)
     expect(decomposer.components.shape[0]).to eq(n_components)
     expect(decomposer.components.shape[1]).to eq(n_features)
 
@@ -33,15 +33,15 @@ RSpec.describe Rumale::Decomposition::NMF do
   it 'transform non-negative coefficients.' do
     decomposer.fit(x)
     comp = decomposer.components.dup
-    y = x[0...10, true] + Numo::DFloat.new(10, n_features).rand * 0.01
+    y = x[0...10, true] + Xumo::DFloat.new(10, n_features).rand * 0.01
     y_coef = decomposer.transform(y)
 
-    expect(y_coef.class).to eq(Numo::DFloat)
+    expect(y_coef.class).to eq(Xumo::DFloat)
     expect(y_coef.shape[0]).to eq(10)
     expect(y_coef.shape[1]).to eq(n_components)
 
     expect(decomposer.components).to eq(comp)
-    expect(decomposer.components.class).to eq(Numo::DFloat)
+    expect(decomposer.components.class).to eq(Xumo::DFloat)
     expect(decomposer.components.shape[0]).to eq(n_components)
     expect(decomposer.components.shape[1]).to eq(n_features)
 
@@ -56,7 +56,7 @@ RSpec.describe Rumale::Decomposition::NMF do
     rec_x = liner.inverse_transform(sub_x)
     expect(rec_x.shape[0]).to eq(x.shape[0])
     expect(rec_x.shape[1]).to eq(x.shape[1])
-    mse = Numo::NMath.sqrt(((x - rec_x)**2).sum(1)).mean
+    mse = Xumo::NMath.sqrt(((x - rec_x)**2).sum(1)).mean
     expect(mse).to be <= 0.5
   end
 

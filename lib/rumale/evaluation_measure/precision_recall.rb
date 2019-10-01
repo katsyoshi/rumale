@@ -14,8 +14,8 @@ module Rumale
         y_true.sort.to_a.uniq.map do |label|
           target_positions = y_pred.eq(label)
           next 0.0 if y_pred[target_positions].empty?
-          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
-          n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
+          n_true_positives = Xumo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
+          n_false_positives = Xumo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           n_true_positives / (n_true_positives + n_false_positives)
         end
       end
@@ -25,8 +25,8 @@ module Rumale
         y_true.sort.to_a.uniq.map do |label|
           target_positions = y_true.eq(label)
           next 0.0 if y_pred[target_positions].empty?
-          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
-          n_false_negatives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
+          n_true_positives = Xumo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
+          n_false_negatives = Xumo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           n_true_positives / (n_true_positives + n_false_negatives)
         end
       end
@@ -44,8 +44,8 @@ module Rumale
         evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_pred.eq(label)
           next [0.0, 0.0] if y_pred[target_positions].empty?
-          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
-          n_false_positives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
+          n_true_positives = Xumo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
+          n_false_positives = Xumo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_positives]
         end
         res = evaluated_values.transpose.map { |v| v.inject(:+) }
@@ -57,8 +57,8 @@ module Rumale
         evaluated_values = y_true.sort.to_a.uniq.map do |label|
           target_positions = y_true.eq(label)
           next 0.0 if y_pred[target_positions].empty?
-          n_true_positives = Numo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
-          n_false_negatives = Numo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
+          n_true_positives = Xumo::Int32.cast(y_true[target_positions].eq(y_pred[target_positions])).sum.to_f
+          n_false_negatives = Xumo::Int32.cast(y_true[target_positions].ne(y_pred[target_positions])).sum.to_f
           [n_true_positives, n_true_positives + n_false_negatives]
         end
         res = evaluated_values.transpose.map { |v| v.inject(:+) }

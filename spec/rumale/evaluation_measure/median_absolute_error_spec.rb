@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure::MedianAbsoluteError do
-  let(:ground_truth) { Numo::DFloat[3, -0.5, 2, 7] }
-  let(:estimated) { Numo::DFloat[2.5, 0.0, 2, 8] }
-  let(:mult_ground_truth) { Numo::DFloat[[0.5, 1.9], [-0.7, 1.8], [7.9, -6.5]] }
-  let(:mult_estimated) { Numo::DFloat[[0.4, 2.0], [-0.8, 2.0], [8.3, -5.9]] }
+  let(:ground_truth) { Xumo::DFloat[3, -0.5, 2, 7] }
+  let(:estimated) { Xumo::DFloat[2.5, 0.0, 2, 8] }
+  let(:mult_ground_truth) { Xumo::DFloat[[0.5, 1.9], [-0.7, 1.8], [7.9, -6.5]] }
+  let(:mult_estimated) { Xumo::DFloat[[0.4, 2.0], [-0.8, 2.0], [8.3, -5.9]] }
   let(:evaluator) { described_class.new }
 
   it 'calculates median absolute error for single regression task.' do

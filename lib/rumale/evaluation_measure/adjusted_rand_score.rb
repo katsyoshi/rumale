@@ -17,8 +17,8 @@ module Rumale
 
       # Calculate adjusted rand index.
       #
-      # @param y_true [Numo::Int32] (shape: [n_samples]) Ground truth labels.
-      # @param y_pred [Numo::Int32] (shape: [n_samples]) Predicted cluster labels.
+      # @param y_true [Xumo::Int32] (shape: [n_samples]) Ground truth labels.
+      # @param y_pred [Xumo::Int32] (shape: [n_samples]) Predicted cluster labels.
       # @return [Float] Adjusted rand index.
       def score(y_true, y_pred)
         y_true = check_convert_label_array(y_true)
@@ -49,7 +49,7 @@ module Rumale
         cluster_ids = y_pred.to_a.uniq
         n_classes = class_ids.size
         n_clusters = cluster_ids.size
-        table = Numo::Int32.zeros(n_classes, n_clusters)
+        table = Xumo::Int32.zeros(n_classes, n_clusters)
         n_classes.times do |i|
           b_true = y_true.eq(class_ids[i])
           n_clusters.times do |j|

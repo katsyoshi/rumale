@@ -9,7 +9,7 @@ module Rumale
   #   estimator.fit(x, bin_y)
   #   df = estimator.decision_function(x)
   #   params = Rumale::ProbabilisticOutput.fit_sigmoid(df, bin_y)
-  #   probs = 1 / (Numo::NMath.exp(params[0] * df + params[1]) + 1)
+  #   probs = 1 / (Xumo::NMath.exp(params[0] * df + params[1]) + 1)
   #
   # *Reference*
   # 1. J C. Platt, "Probabilistic Outputs for Support Vector Machines and Comparisons to Regularized Likelihood Methods," Adv. Large Margin Classifiers, pp. 61--74, 2000.
@@ -18,12 +18,12 @@ module Rumale
     class << self
       # Fit the probabilistic model for binary SVM outputs.
       #
-      # @param df [Numo::DFloat] (shape: [n_samples]) The outputs of decision function to be used for fitting the model.
-      # @param bin_y [Numo::Int32] (shape: [n_samples]) The binary labels to be used for fitting the model.
+      # @param df [Xumo::DFloat] (shape: [n_samples]) The outputs of decision function to be used for fitting the model.
+      # @param bin_y [Xumo::Int32] (shape: [n_samples]) The binary labels to be used for fitting the model.
       # @param max_iter [Integer] The maximum number of iterations.
       # @param min_step [Float] The minimum step of Newton's method.
       # @param sigma [Float] The parameter to avoid hessian matrix from becoming singular matrix.
-      # @return [Numo::DFloat] (shape: 2) The parameters of the model.
+      # @return [Xumo::DFloat] (shape: 2) The parameters of the model.
       def fit_sigmoid(df, bin_y, max_iter = 100, min_step = 1e-10, sigma = 1e-12)
         # Initialize some variables.
         n_samples = bin_y.size
@@ -32,14 +32,14 @@ module Rumale
         neg = bin_y.eq(negative_label)
         n_pos_samples = pos.count
         n_neg_samples = neg.count
-        target_probs = Numo::DFloat.zeros(n_samples)
+        target_probs = Xumo::DFloat.zeros(n_samples)
         target_probs[pos] = (n_pos_samples + 1) / (n_pos_samples + 2.0)
         target_probs[neg] = 1 / (n_neg_samples + 2.0)
         alpha = 0.0
         beta = Math.log((n_neg_samples + 1) / (n_pos_samples + 1.0))
         err = error_function(target_probs, df, alpha, beta)
         # Optimize parameters for class porbability calculation.
-        old_grad_vec = Numo::DFloat.zeros(2)
+        old_grad_vec = Xumo::DFloat.zeros(2)
         max_iter.times do
           # Calculate gradient and hessian matrix.
           probs = predicted_probs(df, alpha, beta)
@@ -64,7 +64,7 @@ module Rumale
             break
           end
         end
-        Numo::DFloat[alpha, beta]
+        Xumo::DFloat[alpha, beta]
       end
 
       private
@@ -74,8 +74,8 @@ module Rumale
         pos = fn.ge(0.0)
         neg = fn.lt(0.0)
         err = 0.0
-        err += (target_probs[pos] * fn[pos] + Numo::NMath.log(1 + Numo::NMath.exp(-fn[pos]))).sum if pos.count.positive?
-        err += ((target_probs[neg] - 1) * fn[neg] + Numo::NMath.log(1 + Numo::NMath.exp(fn[neg]))).sum if neg.count.positive?
+        err += (target_probs[pos] * fn[pos] + Xumo::NMath.log(1 + Xumo::NMath.exp(-fn[pos]))).sum if pos.count.positive?
+        err += ((target_probs[neg] - 1) * fn[neg] + Xumo::NMath.log(1 + Xumo::NMath.exp(fn[neg]))).sum if neg.count.positive?
         err
       end
 
@@ -83,15 +83,15 @@ module Rumale
         fn = alpha * df + beta
         pos = fn.ge(0.0)
         neg = fn.lt(0.0)
-        probs = Numo::DFloat.zeros(df.shape[0])
-        probs[pos] = Numo::NMath.exp(-fn[pos]) / (1 + Numo::NMath.exp(-fn[pos])) if pos.count.positive?
-        probs[neg] = 1 / (1 + Numo::NMath.exp(fn[neg])) if neg.count.positive?
+        probs = Xumo::DFloat.zeros(df.shape[0])
+        probs[pos] = Xumo::NMath.exp(-fn[pos]) / (1 + Xumo::NMath.exp(-fn[pos])) if pos.count.positive?
+        probs[neg] = 1 / (1 + Xumo::NMath.exp(fn[neg])) if neg.count.positive?
         probs
       end
 
       def gradient(target_probs, probs, df)
         sub = target_probs - probs
-        Numo::DFloat[(df * sub).sum, sub.sum]
+        Xumo::DFloat[(df * sub).sum, sub.sum]
       end
 
       def hessian_matrix(probs, df, sigma)
@@ -99,12 +99,12 @@ module Rumale
         h11 = (df * df * sub).sum + sigma
         h22 = sub.sum + sigma
         h21 = (df * sub).sum
-        Numo::DFloat[[h11, h21], [h21, h22]]
+        Xumo::DFloat[[h11, h21], [h21, h22]]
       end
 
       def directions(grad_vec, hess_mat)
         det = hess_mat[0, 0] * hess_mat[1, 1] - hess_mat[0, 1] * hess_mat[1, 0]
-        inv_hess_mat = Numo::DFloat[[hess_mat[1, 1], -hess_mat[0, 1]], [-hess_mat[1, 0], hess_mat[0, 0]]] / det
+        inv_hess_mat = Xumo::DFloat[[hess_mat[1, 1], -hess_mat[0, 1]], [-hess_mat[1, 0], hess_mat[0, 0]]] / det
         -inv_hess_mat.dot(grad_vec)
       end
     end

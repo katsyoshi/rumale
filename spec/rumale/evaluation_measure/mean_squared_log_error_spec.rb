@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure::MeanSquaredLogError do
-  let(:ground_truth) { Numo::DFloat[3, 5, 2.5, 7] }
-  let(:estimated) { Numo::DFloat[2.5, 5, 4, 8] }
-  let(:mult_ground_truth) { Numo::DFloat[[0.5, 1], [1, 2], [7, 6]] }
-  let(:mult_estimated) { Numo::DFloat[[0.5, 2], [1, 2.5], [8, 8]] }
+  let(:ground_truth) { Xumo::DFloat[3, 5, 2.5, 7] }
+  let(:estimated) { Xumo::DFloat[2.5, 5, 4, 8] }
+  let(:mult_ground_truth) { Xumo::DFloat[[0.5, 1], [1, 2], [7, 6]] }
+  let(:mult_estimated) { Xumo::DFloat[[0.5, 2], [1, 2.5], [8, 8]] }
   let(:evaluator) { described_class.new }
 
   it 'calculates mean squared logarithmic error for single regression task.' do

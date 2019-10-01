@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure::R2Score do
-  let(:ground_truth) { Numo::DFloat[3, -0.2, 2, 7] }
-  let(:estimated)    { Numo::DFloat[2.5, 0.0, 2, 7.2] }
-  let(:mult_ground_truth) { Numo::DFloat[[0.5, 1], [-0.7, 1], [7, -6]] }
-  let(:mult_estimated)    { Numo::DFloat[[0.1, 2], [-0.8, 2], [8, -5]] }
+  let(:ground_truth) { Xumo::DFloat[3, -0.2, 2, 7] }
+  let(:estimated)    { Xumo::DFloat[2.5, 0.0, 2, 7.2] }
+  let(:mult_ground_truth) { Xumo::DFloat[[0.5, 1], [-0.7, 1], [7, -6]] }
+  let(:mult_estimated)    { Xumo::DFloat[[0.1, 2], [-0.8, 2], [8, -5]] }
   let(:evaluator) { described_class.new }
 
   it 'calculates average R^2-score for single regression task.' do
@@ -22,7 +22,7 @@ RSpec.describe Rumale::EvaluationMeasure::R2Score do
   end
 
   it 'returns zero if the division by zero occurs in calculation process.' do
-    r2_score = evaluator.score(Numo::DFloat[2, 2, 2], Numo::DFloat[1, 0.5, 1.5])
+    r2_score = evaluator.score(Xumo::DFloat[2, 2, 2], Xumo::DFloat[1, 0.5, 1.5])
     expect(r2_score.class).to eq(Float)
     expect(r2_score).to be_zero
   end

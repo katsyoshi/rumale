@@ -12,7 +12,7 @@ module Rumale
     #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2)
     #   representaion = decomposer.fit_transform(samples)
     #
-    #   # If Numo::Linalg is installed, you can specify 'evd' for the solver option.
+    #   # If Xumo::Linalg is installed, you can specify 'evd' for the solver option.
     #   require 'numo/linalg/autoloader'
     #   decomposer = Rumale::Decomposition::PCA.new(n_components: 2, solver: 'evd')
     #   representaion = decomposer.fit_transform(samples)
@@ -24,11 +24,11 @@ module Rumale
       include Base::Transformer
 
       # Returns the principal components.
-      # @return [Numo::DFloat] (shape: [n_components, n_features])
+      # @return [Xumo::DFloat] (shape: [n_components, n_features])
       attr_reader :components
 
       # Returns the mean vector.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :mean
 
       # Return the random generator.
@@ -64,7 +64,7 @@ module Rumale
       #
       # @overload fit(x) -> PCA
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [PCA] The learned transformer itself.
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -78,7 +78,7 @@ module Rumale
         # optimization.
         covariance_mat = centered_x.transpose.dot(centered_x) / (n_samples - 1)
         if @params[:solver] == 'evd' && enable_linalg?
-          _, evecs = Numo::Linalg.eigh(covariance_mat, vals_range: (n_features - @params[:n_components])...n_features)
+          _, evecs = Xumo::Linalg.eigh(covariance_mat, vals_range: (n_features - @params[:n_components])...n_features)
           comps = evecs.reverse(1).transpose
           @components = @params[:n_components] == 1 ? comps[0, true].dup : comps.dup
         else
@@ -89,7 +89,7 @@ module Rumale
               break if (updated.dot(comp_vec) - 1).abs < @params[:tol]
               comp_vec = updated
             end
-            @components = @components.nil? ? comp_vec : Numo::NArray.vstack([@components, comp_vec])
+            @components = @components.nil? ? comp_vec : Xumo::NArray.vstack([@components, comp_vec])
           end
         end
         self
@@ -97,10 +97,10 @@ module Rumale
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x).transform(x)
@@ -108,8 +108,8 @@ module Rumale
 
       # Transform the given data with the learned model.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
         (x - @mean).dot(@components.transpose)
@@ -117,8 +117,8 @@ module Rumale
 
       # Inverse transform the given transformed data with the learned model.
       #
-      # @param z [Numo::DFloat] (shape: [n_samples, n_components]) The data to be restored into original space with the learned model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_featuress]) The restored data.
+      # @param z [Xumo::DFloat] (shape: [n_samples, n_components]) The data to be restored into original space with the learned model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_featuress]) The restored data.
       def inverse_transform(z)
         z = check_convert_sample_array(z)
         c = @components.shape[1].nil? ? @components.expand_dims(0) : @components

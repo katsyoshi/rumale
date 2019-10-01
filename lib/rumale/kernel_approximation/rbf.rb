@@ -21,11 +21,11 @@ module Rumale
       include Base::Transformer
 
       # Return the random matrix for transformation.
-      # @return [Numo::DFloat] (shape: [n_features, n_components])
+      # @return [Xumo::DFloat] (shape: [n_features, n_components])
       attr_reader :random_mat
 
       # Return the random vector for transformation.
-      # @return [Numo::DFloat] (shape: [n_components])
+      # @return [Xumo::DFloat] (shape: [n_components])
       attr_reader :random_vec
 
       # Return the random generator for transformation.
@@ -55,7 +55,7 @@ module Rumale
       #
       # @overload fit(x) -> RBF
       #
-      # @param x [Numo::NArray] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::NArray] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   This method uses only the number of features of the data.
       # @return [RBF] The learned transformer itself.
       def fit(x, _y = nil)
@@ -66,18 +66,18 @@ module Rumale
         @params[:n_components] = 2 * n_features if @params[:n_components] <= 0
         @random_mat = Rumale::Utils.rand_normal([n_features, @params[:n_components]], sub_rng) * (2.0 * @params[:gamma])**0.5
         n_half_components = @params[:n_components] / 2
-        @random_vec = Numo::DFloat.zeros(@params[:n_components] - n_half_components).concatenate(
-          Numo::DFloat.ones(n_half_components) * (0.5 * Math::PI)
+        @random_vec = Xumo::DFloat.zeros(@params[:n_components] - n_half_components).concatenate(
+          Xumo::DFloat.ones(n_half_components) * (0.5 * Math::PI)
         )
         self
       end
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
 
@@ -86,16 +86,16 @@ module Rumale
 
       # Transform the given data with the learned model.
       #
-      # @overload transform(x) -> Numo::DFloat
+      # @overload transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
 
         n_samples, = x.shape
         projection = x.dot(@random_mat) + @random_vec.tile(n_samples, 1)
-        Numo::NMath.sin(projection) * ((2.0 / @params[:n_components])**0.5)
+        Xumo::NMath.sin(projection) * ((2.0 / @params[:n_components])**0.5)
       end
 
       # Dump marshal data.

@@ -58,9 +58,9 @@ module Rumale
 
       # Perform the evalution of given classifier with cross-validation method.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features])
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features])
       #   The dataset to be used to evaluate the estimator.
-      # @param y [Numo::Int32 / Numo::DFloat] (shape: [n_samples] / [n_samples, n_outputs])
+      # @param y [Xumo::Int32 / Xumo::DFloat] (shape: [n_samples] / [n_samples, n_outputs])
       #   The labels to be used to evaluate the classifier / The target values to be used to evaluate the regressor.
       # @return [Hash] The report summarizing the results of cross-validation.
       #   * :fit_time (Array<Float>) The calculation times of fitting the estimator for each split.

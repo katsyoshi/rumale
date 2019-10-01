@@ -22,13 +22,13 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     expect(estimator.estimators.class).to eq(Array)
     expect(estimator.estimators[0].class).to eq(Rumale::Tree::GradientTreeRegressor)
     expect(estimator.estimators.size).to eq(n_estimators)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(2)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_bin, y_bin)).to be_within(0.02).of(1.0)
-    expect(leaf_ids.class).to eq(Numo::Int32)
+    expect(leaf_ids.class).to eq(Xumo::Int32)
     expect(leaf_ids.shape).to eq([n_samples, n_estimators])
   end
 
@@ -41,13 +41,13 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     expect(estimator.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
     expect(estimator.estimators.size).to eq(3)
     expect(estimator.estimators[0].size).to eq(n_estimators)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(3)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_mlt, y_mlt)).to be_within(0.02).of(1.0)
-    expect(leaf_ids.class).to eq(Numo::Int32)
+    expect(leaf_ids.class).to eq(Xumo::Int32)
     expect(leaf_ids.shape).to eq([n_samples, n_estimators, 3])
   end
 
@@ -60,13 +60,13 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     expect(estimator_parallel.estimators[0][0].class).to eq(Rumale::Tree::GradientTreeRegressor)
     expect(estimator_parallel.estimators.size).to eq(3)
     expect(estimator_parallel.estimators[0].size).to eq(n_estimators)
-    expect(estimator_parallel.classes.class).to eq(Numo::Int32)
+    expect(estimator_parallel.classes.class).to eq(Xumo::Int32)
     expect(estimator_parallel.classes.size).to eq(3)
-    expect(estimator_parallel.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator_parallel.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator_parallel.feature_importances.shape[0]).to eq(n_features)
     expect(estimator_parallel.feature_importances.shape[1]).to be_nil
     expect(estimator_parallel.score(x_mlt, y_mlt)).to be_within(0.02).of(1.0)
-    expect(leaf_ids.class).to eq(Numo::Int32)
+    expect(leaf_ids.class).to eq(Xumo::Int32)
     expect(leaf_ids.shape).to eq([n_samples, n_estimators, 3])
   end
 
@@ -75,8 +75,8 @@ RSpec.describe Rumale::Ensemble::GradientBoostingClassifier do
     estimator.fit(x_mlt, y_mlt)
     probs = estimator.predict_proba(x_mlt)
     classes = y_mlt.to_a.uniq.sort
-    predicted = Numo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })
-    expect(probs.class).to eq(Numo::DFloat)
+    predicted = Xumo::Int32.asarray(Array.new(n_samples) { |n| classes[probs[n, true].max_index] })
+    expect(probs.class).to eq(Xumo::DFloat)
     expect(probs.shape[0]).to eq(n_samples)
     expect(probs.shape[1]).to eq(3)
     expect(predicted).to eq(y_mlt)

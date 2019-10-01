@@ -39,7 +39,7 @@ module Rumale
       # Analysis clusters with given training data.
       #
       # @overload fit(x) -> SNN
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #     If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [SNN] The learned cluster analyzer itself.
       def fit(x, _y = nil)
@@ -48,9 +48,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         super
       end
@@ -60,7 +60,7 @@ module Rumale
       def calc_pairwise_metrics(x)
         distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x)
         n_samples = distance_mat.shape[0]
-        adjacency_mat = Numo::DFloat.zeros(n_samples, n_samples)
+        adjacency_mat = Xumo::DFloat.zeros(n_samples, n_samples)
         n_samples.times do |n|
           neighbor_ids = distance_mat[n, true].sort_index[0...@params[:n_neighbors]]
           adjacency_mat[n, neighbor_ids] = 1

@@ -84,8 +84,8 @@ module Rumale
 
       # Fit the model with given training data and all sets of parameters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) The target values or labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::NArray] (shape: [n_samples, n_outputs]) The target values or labels to be used for fitting the model.
       # @return [GridSearchCV] The learned estimator with grid search.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -108,8 +108,8 @@ module Rumale
 
       # Call the decision_function method of learned estimator with the best parameter.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
-      # @return [Numo::DFloat] (shape: [n_samples]) Confidence score per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to compute the scores.
+      # @return [Xumo::DFloat] (shape: [n_samples]) Confidence score per sample.
       def decision_function(x)
         x = check_convert_sample_array(x)
         @best_estimator.decision_function(x)
@@ -117,8 +117,8 @@ module Rumale
 
       # Call the predict method of learned estimator with the best parameter.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to obtain prediction result.
-      # @return [Numo::NArray] Predicted results.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to obtain prediction result.
+      # @return [Xumo::NArray] Predicted results.
       def predict(x)
         x = check_convert_sample_array(x)
         @best_estimator.predict(x)
@@ -126,8 +126,8 @@ module Rumale
 
       # Call the predict_log_proba method of learned estimator with the best parameter.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the log-probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted log-probability of each class per sample.
       def predict_log_proba(x)
         x = check_convert_sample_array(x)
         @best_estimator.predict_log_proba(x)
@@ -135,8 +135,8 @@ module Rumale
 
       # Call the predict_proba method of learned estimator with the best parameter.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
         @best_estimator.predict_proba(x)
@@ -144,8 +144,8 @@ module Rumale
 
       # Call the score method of learned estimator with the best parameter.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
-      # @param y [Numo::NArray] (shape: [n_samples, n_outputs]) True target values or labels for testing data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) Testing data.
+      # @param y [Xumo::NArray] (shape: [n_samples, n_outputs]) True target values or labels for testing data.
       # @return [Float] The score of estimator.
       def score(x, y)
         x = check_convert_sample_array(x)
@@ -225,9 +225,9 @@ module Rumale
       end
 
       def store_cv_result(prms, report)
-        test_scores = Numo::DFloat[*report[:test_score]]
-        train_scores = Numo::DFloat[*report[:train_score]]
-        fit_times = Numo::DFloat[*report[:fit_time]]
+        test_scores = Xumo::DFloat[*report[:test_score]]
+        train_scores = Xumo::DFloat[*report[:train_score]]
+        fit_times = Xumo::DFloat[*report[:fit_time]]
         @cv_results[:mean_test_score].push(test_scores.mean)
         @cv_results[:std_test_score].push(test_scores.stddev)
         @cv_results[:mean_train_score].push(train_scores.mean)

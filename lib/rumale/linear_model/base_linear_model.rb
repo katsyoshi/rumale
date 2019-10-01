@@ -50,7 +50,7 @@ module Rumale
         # Initialize some variables.
         n_samples, n_features = samples.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng.dup)
-        weight = Numo::DFloat.zeros(n_features)
+        weight = Xumo::DFloat.zeros(n_features)
         optimizer = @params[:optimizer].dup
         # Optimization.
         @params[:max_iter].times do |_t|
@@ -78,7 +78,7 @@ module Rumale
 
       def expand_feature(x)
         n_samples = x.shape[0]
-        Numo::NArray.hstack([x, Numo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
+        Xumo::NArray.hstack([x, Xumo::DFloat.ones([n_samples, 1]) * @params[:bias_scale]])
       end
 
       def split_weight(weight)

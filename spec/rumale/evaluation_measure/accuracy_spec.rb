@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure::Accuracy do
-  let(:bin_ground_truth) { Numo::Int32[1, 1, 1, 1, 1, -1, -1, -1, -1, -1] }
-  let(:bin_predicted) { Numo::Int32[-1, -1, 1, 1, 1, -1, -1, 1, 1, 1] }
-  let(:mult_ground_truth) { Numo::Int32[1, 1, 2, 2, 3, 3, 0, 0, 4, 4] }
-  let(:mult_predicted) { Numo::Int32[5, 1, 5, 2, 5, 3, 5, 0, 5, 4] }
+  let(:bin_ground_truth) { Xumo::Int32[1, 1, 1, 1, 1, -1, -1, -1, -1, -1] }
+  let(:bin_predicted) { Xumo::Int32[-1, -1, 1, 1, 1, -1, -1, 1, 1, 1] }
+  let(:mult_ground_truth) { Xumo::Int32[1, 1, 2, 2, 3, 3, 0, 0, 4, 4] }
+  let(:mult_predicted) { Xumo::Int32[5, 1, 5, 2, 5, 3, 5, 0, 5, 4] }
 
   it 'calculates accuracy for binary classification task.' do
     evaluator = described_class.new

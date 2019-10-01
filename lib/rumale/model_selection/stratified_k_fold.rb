@@ -49,10 +49,10 @@ module Rumale
 
       # Generate data indices for stratified K-fold cross validation.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features])
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features])
       #   The dataset to be used to generate data indices for stratified K-fold cross validation.
       #   This argument exists to unify the interface between the K-fold methods, it is not used in the method.
-      # @param y [Numo::Int32] (shape: [n_samples])
+      # @param y [Xumo::Int32] (shape: [n_samples])
       #   The labels to be used to generate data indices for stratified K-fold cross validation.
       # @return [Array] The set of data indices for constructing the training and testing dataset in each fold.
       def split(x, y)

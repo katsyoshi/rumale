@@ -13,21 +13,21 @@ RSpec.describe Rumale::Clustering::SNN do
   let(:n_outliers) { 5 }
   let(:samples_with_outlier) do
     outliers = Rumale::Utils.rand_normal([n_outliers, 2], Random.new(1), 0, 0.01)
-    Numo::NArray.vstack([samples, outliers])
+    Xumo::NArray.vstack([samples, outliers])
   end
 
   shared_examples 'cluster analysis' do
     it 'finds clusters.' do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.size).to eq(n_samples)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.class).to eq(Xumo::Int32)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
-      expect(analyzer.core_sample_ids.class).to eq(Numo::Int32)
+      expect(analyzer.core_sample_ids.class).to eq(Xumo::Int32)
       expect(analyzer.core_sample_ids.shape[0]).not_to be_nil
       expect(analyzer.core_sample_ids.shape[1]).to be_nil
       expect(analyzer.score(x, y)).to eq(1)
@@ -73,8 +73,8 @@ RSpec.describe Rumale::Clustering::SNN do
     end
 
     it 'raises ArgumentError when given a non-square matrix' do
-      expect { analyzer.fit(Numo::DFloat.new(3, 2).rand) }.to raise_error(ArgumentError)
-      expect { analyzer.fit_predict(Numo::DFloat.new(2, 3).rand) }.to raise_error(ArgumentError)
+      expect { analyzer.fit(Xumo::DFloat.new(3, 2).rand) }.to raise_error(ArgumentError)
+      expect { analyzer.fit_predict(Xumo::DFloat.new(2, 3).rand) }.to raise_error(ArgumentError)
     end
   end
 

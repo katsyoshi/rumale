@@ -11,21 +11,21 @@ RSpec.describe Rumale::Decomposition::PCA do
   let(:samples) { transformer.fit_transform(x) }
   let(:sub_samples) { decomposer.fit_transform(samples) }
   let(:rec_samples) { decomposer.inverse_transform(sub_samples) }
-  let(:mse) { Numo::NMath.sqrt(((samples - rec_samples)**2).sum(1)).mean }
+  let(:mse) { Xumo::NMath.sqrt(((samples - rec_samples)**2).sum(1)).mean }
   let(:n_samples) { samples.shape[0] }
   let(:n_features) { samples.shape[1] }
 
   shared_examples 'projection into subspace' do
     it 'projects high-dimensinal data into subspace.' do
-      expect(sub_samples.class).to eq(Numo::DFloat)
+      expect(sub_samples.class).to eq(Xumo::DFloat)
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
       expect(rec_samples.shape[0]).to eq(n_samples)
       expect(rec_samples.shape[1]).to eq(n_features)
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components.class).to eq(Xumo::DFloat)
       expect(decomposer.components.shape[0]).to eq(n_components)
       expect(decomposer.components.shape[1]).to eq(n_features)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean.class).to eq(Xumo::DFloat)
       expect(decomposer.mean.shape[0]).to eq(n_features)
       expect(decomposer.mean.shape[1]).to be_nil
       expect(mse).to be <= 0.1

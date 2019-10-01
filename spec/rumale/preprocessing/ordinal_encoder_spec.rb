@@ -12,7 +12,7 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
          ['up', 10, :c],
          ['down', 15, :b],
          ['right', 20, :c]]
-    Numo::NArray.asarray(x)
+    Xumo::NArray.asarray(x)
   end
   let(:encoded_training) do
     x = [[1, 0, 0],
@@ -22,7 +22,7 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
          [3, 0, 2],
          [0, 1, 1],
          [2, 2, 2]]
-    Numo::DFloat.asarray(x)
+    Xumo::DFloat.asarray(x)
   end
   let(:encoded_training_b) do
     x = [[2, 1, 2],
@@ -32,19 +32,19 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
          [0, 1, 1],
          [1, 0, 0],
          [3, 2, 1]]
-    Numo::NArray.asarray(x)
+    Xumo::NArray.asarray(x)
   end
   let(:testing) do
     x = [['up', 10, :c],
          ['down', 15, :b],
          ['right', 20, :a]]
-    Numo::NArray.asarray(x)
+    Xumo::NArray.asarray(x)
   end
   let(:encoded_testing) do
     x = [[3, 0, 2],
          [0, 1, 1],
          [2, 2, 0]]
-    Numo::DFloat.asarray(x)
+    Xumo::DFloat.asarray(x)
   end
   let(:categories) { [['up', 'down', 'left', 'right'], [15, 10, 20], [:b, :c, :a]] }
   let(:encoder_auto) { described_class.new }
@@ -54,10 +54,10 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
     encoded = encoder_auto.fit_transform(training)
     decoded = encoder_auto.inverse_transform(encoded)
     expect(encoder_auto.categories).to eq([['down', 'left', 'right', 'up'], [10, 15, 20], [:a, :b, :c]])
-    expect(encoded.class).to eq(Numo::DFloat)
+    expect(encoded.class).to eq(Xumo::DFloat)
     expect(encoded.shape).to eq(training.shape)
     expect(encoded).to eq(encoded_training)
-    expect(decoded.class).to eq(Numo::RObject)
+    expect(decoded.class).to eq(Xumo::RObject)
     expect(decoded.shape).to eq(training.shape)
     expect(decoded.to_a).to eq(training.to_a)
   end
@@ -65,7 +65,7 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
   it 'encodes testing data.' do
     encoder_auto.fit(training)
     encoded = encoder_auto.transform(testing)
-    expect(encoded.class).to eq(Numo::DFloat)
+    expect(encoded.class).to eq(Xumo::DFloat)
     expect(encoded.shape).to eq(testing.shape)
     expect(encoded).to eq(encoded_testing)
   end
@@ -73,7 +73,7 @@ RSpec.describe Rumale::Preprocessing::OrdinalEncoder do
   it 'encodes with specified categories.' do
     encoded = encoder.transform(training)
     expect(encoder.categories).to eq(categories)
-    expect(encoded.class).to eq(Numo::DFloat)
+    expect(encoded.class).to eq(Xumo::DFloat)
     expect(encoded.shape).to eq(training.shape)
     expect(encoded).to eq(encoded_training_b)
   end

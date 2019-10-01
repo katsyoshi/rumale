@@ -33,11 +33,11 @@ module Rumale
 
       # Calculate the updated weight with SGD.
       #
-      # @param weight [Numo::DFloat] (shape: [n_features]) The weight to be updated.
-      # @param gradient [Numo::DFloat] (shape: [n_features]) The gradient for updating the weight.
-      # @return [Numo::DFloat] (shape: [n_feautres]) The updated weight.
+      # @param weight [Xumo::DFloat] (shape: [n_features]) The weight to be updated.
+      # @param gradient [Xumo::DFloat] (shape: [n_features]) The gradient for updating the weight.
+      # @return [Xumo::DFloat] (shape: [n_feautres]) The updated weight.
       def call(weight, gradient)
-        @update ||= Numo::DFloat.zeros(weight.shape[0])
+        @update ||= Xumo::DFloat.zeros(weight.shape[0])
         current_learning_rate = @params[:learning_rate] / (1.0 + @params[:decay] * @iter)
         @iter += 1
         @update = @params[:momentum] * @update - current_learning_rate * gradient

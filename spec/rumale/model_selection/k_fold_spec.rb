@@ -8,7 +8,7 @@ RSpec.describe Rumale::ModelSelection::KFold do
   let(:n_features) { 3 }
   let(:n_training_samples) { n_samples - n_samples / n_splits }
   let(:n_testing_samples) { n_samples / n_splits }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
   let(:labels) { nil }
 
   it 'splits the dataset.' do

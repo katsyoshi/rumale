@@ -25,7 +25,7 @@ module Rumale
       attr_reader :estimators
 
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the random generator for random selection of feature index.
@@ -76,8 +76,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [RandomForestRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -119,8 +119,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted value per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted value per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         if enable_parallel?
@@ -132,11 +132,11 @@ module Rumale
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to assign each leaf.
-      # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to assign each leaf.
+      # @return [Xumo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
+        Xumo::Int32[*Array.new(@params[:n_estimators]) { |n| @estimators[n].apply(x) }].transpose
       end
 
       # Dump marshal data.

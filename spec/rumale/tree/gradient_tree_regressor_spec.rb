@@ -8,8 +8,8 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
   let(:y_bin) { Numo::DFloat.cast(two_clusters[1]) * 2 - 1 }
   let(:n_samples) { x_bin.shape[0] }
   let(:n_features) { x_bin.shape[1] }
-  let(:y_pred) { 2.0 * Numo::DFloat.new(n_samples).rand - 1.0 }
-  let(:grad) { -2.0 * y_bin / (1.0 + Numo::NMath.exp(2.0 * y_bin * y_pred)) }
+  let(:y_pred) { 2.0 * Xumo::DFloat.new(n_samples).rand - 1.0 }
+  let(:grad) { -2.0 * y_bin / (1.0 + Xumo::NMath.exp(2.0 * y_bin * y_pred)) }
   let(:hess) { grad.abs * (2.0 - grad.abs) }
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
@@ -24,10 +24,10 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
   it 'classifies two clusters data.' do
     estimator.fit(x_bin, y_bin, grad, hess)
     expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.leaf_weights.class).to eq(Numo::DFloat)
+    expect(estimator.leaf_weights.class).to eq(Xumo::DFloat)
     expect(estimator.leaf_weights.shape[0]).to eq(2)
     expect(estimator.leaf_weights.shape[1]).to be_nil
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
     expect(estimator.score(x_bin, Numo::DFloat.cast(y_bin))).to be > 0.95
@@ -46,7 +46,6 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
 
   context 'when max_depth parameter is given' do
     let(:max_depth) { 1 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x_bin, y_bin, grad, hess)
       expect(estimator.params[:max_depth]).to eq(max_depth)
@@ -59,7 +58,6 @@ RSpec.describe Rumale::Tree::GradientTreeRegressor do
 
   context 'when max_leaf_nodes parameter is given' do
     let(:max_leaf_nodes) { 2 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x_bin, y_bin, grad, hess)
       expect(estimator.params[:max_leaf_nodes]).to eq(max_leaf_nodes)

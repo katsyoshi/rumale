@@ -16,7 +16,7 @@ module Rumale
       include Base::Transformer
 
       # Return the vector consists of L2-norm for each sample.
-      # @return [Numo::DFloat] (shape: [n_samples])
+      # @return [Xumo::DFloat] (shape: [n_samples])
       attr_reader :norm_vec # :nodoc:
 
       # Create a new normalizer for normaliing to unit L2-norm.
@@ -29,20 +29,20 @@ module Rumale
       #
       # @overload fit(x) -> L2Normalizer
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
       # @return [L2Normalizer]
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
-        @norm_vec = Numo::NMath.sqrt((x**2).sum(1))
+        @norm_vec = Xumo::NMath.sqrt((x**2).sum(1))
         self
       end
 
       # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
-      # @return [Numo::DFloat] The normalized samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [Xumo::DFloat] The normalized samples.
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x)
@@ -52,8 +52,8 @@ module Rumale
       # Calculate L2-norms of each sample, and then normalize samples to unit L2-norm.
       # This method calls the fit_transform method. This method exists for the Pipeline class.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
-      # @return [Numo::DFloat] The normalized samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate L2-norms.
+      # @return [Xumo::DFloat] The normalized samples.
       def transform(x)
         fit_transform(x)
       end

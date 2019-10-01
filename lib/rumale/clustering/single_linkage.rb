@@ -21,7 +21,7 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the cluster labels.
-      # @return [Numo::Int32] (shape: [n_samples])
+      # @return [Xumo::Int32] (shape: [n_samples])
       attr_reader :labels
 
       # Return the hierarchical structure.
@@ -48,7 +48,7 @@ module Rumale
       #
       # @overload fit(x) -> SingleLinkage
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [SingleLinkage] The learned cluster analyzer itself.
       def fit(x, _y = nil)
@@ -60,9 +60,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
@@ -92,8 +92,8 @@ module Rumale
       # @!visibility private
       class UnionFind
         def initialize(n)
-          @parent = Numo::Int32.zeros(2 * n - 1) - 1
-          @size = Numo::Int32.hstack([Numo::Int32.ones(n), Numo::Int32.zeros(n - 1)])
+          @parent = Xumo::Int32.zeros(2 * n - 1) - 1
+          @size = Xumo::Int32.hstack([Xumo::Int32.ones(n), Xumo::Int32.zeros(n - 1)])
           @next_label = n
         end
 
@@ -130,14 +130,14 @@ module Rumale
       def minimum_spanning_tree(complete_graph)
         n_samples = complete_graph.shape[0]
         n_edges = n_samples - 1
-        curr_weights = Numo::DFloat.zeros(n_samples) + Float::INFINITY
-        curr_labels = Numo::Int32.new(n_samples).seq
+        curr_weights = Xumo::DFloat.zeros(n_samples) + Float::INFINITY
+        curr_labels = Xumo::Int32.new(n_samples).seq
         next_node = 0
         mst = Array.new(n_edges) do
           curr_node = next_node
           target = curr_labels.ne(curr_node)
           curr_labels = curr_labels[target]
-          curr_weights = Numo::DFloat.minimum(curr_weights[target], complete_graph[curr_node, curr_labels])
+          curr_weights = Xumo::DFloat.minimum(curr_weights[target], complete_graph[curr_node, curr_labels])
           next_node = curr_labels[curr_weights.min_index]
           weight = curr_weights.min
           OpenStruct.new(x: curr_node, y: next_node, weight: weight)
@@ -182,7 +182,7 @@ module Rumale
 
       def flatten(hierarchy_, n_clusters)
         n_samples = hierarchy_.size + 1
-        return Numo::Int32.zeros(n_samples) if n_clusters < 2
+        return Xumo::Int32.zeros(n_samples) if n_clusters < 2
 
         nodes = [-([hierarchy_[-1].x, hierarchy_[-1].y].max + 1)]
         (n_clusters - 1).times do
@@ -191,7 +191,7 @@ module Rumale
           nodes.push(-children.y)
           nodes.sort!.shift
         end
-        res = Numo::Int32.zeros(n_samples)
+        res = Xumo::Int32.zeros(n_samples)
         nodes.each_with_index { |sid, cluster_id| res[descedent_ids(hierarchy_, -sid)] = cluster_id }
         res
       end

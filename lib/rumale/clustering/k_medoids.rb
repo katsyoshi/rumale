@@ -19,7 +19,7 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the indices of medoids.
-      # @return [Numo::Int32] (shape: [n_clusters])
+      # @return [Xumo::Int32] (shape: [n_clusters])
       attr_reader :medoid_ids
 
       # Return the random generator.
@@ -58,7 +58,7 @@ module Rumale
       #
       # @overload fit(x) -> KMedoids
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [KMedoids] The learned cluster analyzer itself.
       def fit(x, _not_used = nil)
@@ -84,9 +84,9 @@ module Rumale
 
       # Predict cluster labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
       #   If the metric is 'precomputed', x must be distances between samples and medoids (shape: [n_samples, n_clusters]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         distance_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.euclidean_distance(x, @cluster_centers)
@@ -98,9 +98,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         fit(x)
@@ -133,14 +133,14 @@ module Rumale
       private
 
       def assign_cluster(distances_to_medoids)
-        distances_to_medoids.min_index(axis: 1) - Numo::Int32[*0.step(distances_to_medoids.size - 1, @params[:n_clusters])]
+        distances_to_medoids.min_index(axis: 1) - Xumo::Int32[*0.step(distances_to_medoids.size - 1, @params[:n_clusters])]
       end
 
       def init_cluster_centers(distance_mat)
         # random initialize
         n_samples = distance_mat.shape[0]
         sub_rng = @rng.dup
-        @medoid_ids = Numo::Int32.asarray([*0...n_samples].sample(@params[:n_clusters], random: sub_rng))
+        @medoid_ids = Xumo::Int32.asarray([*0...n_samples].sample(@params[:n_clusters], random: sub_rng))
         return unless @params[:init] == 'k-means++'
         # k-means++ initialize
         (1...@params[:n_clusters]).each do |n|

@@ -14,16 +14,16 @@ RSpec.describe Rumale::Manifold::TSNE do
   let(:tsne_metric) { described_class.new(n_components: n_components, metric: 'precomputed', max_iter: 50, random_seed: 1) }
   let(:tsne_tol) { described_class.new(n_components: n_components, max_iter: 50, tol: 1.0, random_seed: 1) }
   let(:tsne_params) do
-    described_class.new(n_components: n_components, perplexity: 200.0, max_iter: 200,
+    described_class.new(n_components: n_components, perplexity: 200.0, max_iter: 50,
                         init: 'pca', verbose: true, random_seed: 1)
   end
 
   it 'maps high-dimensional data into low-dimensional data.' do
     low_samples = tsne.fit_transform(samples)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(tsne.embedding.class).to eq(Numo::DFloat)
+    expect(tsne.embedding.class).to eq(Xumo::DFloat)
     expect(tsne.embedding.shape[0]).to eq(n_samples)
     expect(tsne.embedding.shape[1]).to eq(n_components)
     expect(tsne.n_iter).to eq(50)
@@ -34,10 +34,10 @@ RSpec.describe Rumale::Manifold::TSNE do
 
   it 'maps high-dimensional data represented by distance matrix.' do
     low_samples = tsne_metric.fit_transform(distance_matrix)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(tsne_metric.embedding.class).to eq(Numo::DFloat)
+    expect(tsne_metric.embedding.class).to eq(Xumo::DFloat)
     expect(tsne_metric.embedding.shape[0]).to eq(n_samples)
     expect(tsne_metric.embedding.shape[1]).to eq(n_components)
     expect(tsne_metric.n_iter).to eq(50)
@@ -48,10 +48,10 @@ RSpec.describe Rumale::Manifold::TSNE do
 
   it 'terminates optimization based on the tol parameter.' do
     low_samples = tsne_tol.fit_transform(samples)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(tsne_tol.embedding.class).to eq(Numo::DFloat)
+    expect(tsne_tol.embedding.class).to eq(Xumo::DFloat)
     expect(tsne_tol.embedding.shape[0]).to eq(n_samples)
     expect(tsne_tol.embedding.shape[1]).to eq(n_components)
     expect(tsne_tol.n_iter).to be < 50
@@ -61,7 +61,7 @@ RSpec.describe Rumale::Manifold::TSNE do
   end
 
   it 'raises ArgumentError when given a non-square matrix.' do
-    expect { tsne_metric.fit(Numo::DFloat.new(5, 3).rand) }.to raise_error(ArgumentError)
+    expect { tsne_metric.fit(Xumo::DFloat.new(5, 3).rand) }.to raise_error(ArgumentError)
   end
 
   it 'outputs debug messages.' do

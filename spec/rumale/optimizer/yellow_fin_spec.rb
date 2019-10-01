@@ -4,8 +4,8 @@ require 'spec_helper'
 
 RSpec.describe Rumale::Optimizer::YellowFin do
   let(:x) { two_clusters_dataset[0] }
-  let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
-  let(:y_mult) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
+  let(:y) { x.dot(Xumo::DFloat[1.0, 2.0]) }
+  let(:y_mult) { x.dot(Xumo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:optimizer) { described_class.new(learning_rate: 0.05, momentum: 0.8, decay: 0.995, window_width: 2) }
   let(:estimator) { Rumale::LinearModel::LinearRegression.new(optimizer: optimizer, max_iter: 100, random_seed: 1) }
 
@@ -20,7 +20,7 @@ RSpec.describe Rumale::Optimizer::YellowFin do
   end
 
   it 'dumps and restores itself using Marshal module.' do
-    10.times { optimizer.call(Numo::DFloat[1, 2, 3], Numo::DFloat[0.1, 0.2, 0.3]) }
+    10.times { optimizer.call(Xumo::DFloat[1, 2, 3], Xumo::DFloat[0.1, 0.2, 0.3]) }
     copied = Marshal.load(Marshal.dump(optimizer))
     expect(optimizer.class).to eq(copied.class)
     expect(optimizer.params).to eq(copied.params)

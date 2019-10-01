@@ -19,11 +19,11 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the core sample indices.
-      # @return [Numo::Int32] (shape: [n_core_samples])
+      # @return [Xumo::Int32] (shape: [n_core_samples])
       attr_reader :core_sample_ids
 
       # Return the cluster labels. The negative cluster label indicates that the point is noise.
-      # @return [Numo::Int32] (shape: [n_samples])
+      # @return [Xumo::Int32] (shape: [n_samples])
       attr_reader :labels
 
       # Create a new cluster analyzer with DBSCAN method.
@@ -48,7 +48,7 @@ module Rumale
       #
       # @overload fit(x) -> DBSCAN
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [DBSCAN] The learned cluster analyzer itself.
       def fit(x, _y = nil)
@@ -60,9 +60,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
@@ -94,12 +94,12 @@ module Rumale
         metric_mat = calc_pairwise_metrics(x)
         n_samples = metric_mat.shape[0]
         @core_sample_ids = []
-        @labels = Numo::Int32.zeros(n_samples) - 2
+        @labels = Xumo::Int32.zeros(n_samples) - 2
         n_samples.times do |query_id|
           next if @labels[query_id] >= -1
           cluster_id += 1 if expand_cluster(metric_mat, query_id, cluster_id)
         end
-        @core_sample_ids = Numo::Int32[*@core_sample_ids.flatten]
+        @core_sample_ids = Xumo::Int32[*@core_sample_ids.flatten]
         nil
       end
 

@@ -12,23 +12,24 @@ RSpec.describe Rumale::Clustering::DBSCAN do
   let(:x_mlt_with_outlier) do
     max_vec = x_mlt.max(0) * 2.0
     min_vec = x_mlt.min(0) * 2.0
-    x = Numo::NArray.vstack([x_mlt, max_vec])
-    Numo::NArray.vstack([x, min_vec])
+
+    x = Xumo::NArray.vstack([x_mlt, max_vec])
+    Xumo::NArray.vstack([x, min_vec])
   end
 
   shared_examples 'cluster analysis' do
     it 'finds clusters.' do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.size).to eq(n_samples)
       expect(cluster_labels.shape[0]).to eq(n_samples)
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.labels.class).to eq(Numo::Int32)
+      expect(analyzer.labels.class).to eq(Xumo::Int32)
       expect(analyzer.labels.shape[0]).to eq(n_samples)
       expect(analyzer.labels.shape[1]).to be_nil
-      expect(analyzer.core_sample_ids.class).to eq(Numo::Int32)
+      expect(analyzer.core_sample_ids.class).to eq(Xumo::Int32)
       expect(analyzer.core_sample_ids.shape[0]).not_to be_nil
       expect(analyzer.core_sample_ids.shape[1]).to be_nil
       expect(analyzer.score(x, y_mlt)).to eq(1)
@@ -72,8 +73,8 @@ RSpec.describe Rumale::Clustering::DBSCAN do
     end
 
     it 'raises ArgumentError when given a non-square matrix' do
-      expect { analyzer.fit(Numo::DFloat.new(3, 2).rand) }.to raise_error(ArgumentError)
-      expect { analyzer.fit_predict(Numo::DFloat.new(2, 3).rand) }.to raise_error(ArgumentError)
+      expect { analyzer.fit(Xumo::DFloat.new(3, 2).rand) }.to raise_error(ArgumentError)
+      expect { analyzer.fit_predict(Xumo::DFloat.new(2, 3).rand) }.to raise_error(ArgumentError)
     end
   end
 

@@ -26,15 +26,15 @@ module Rumale
       attr_reader :n_iter
 
       # Return the weight of each cluster.
-      # @return [Numo::DFloat] (shape: [n_clusters])
+      # @return [Xumo::DFloat] (shape: [n_clusters])
       attr_reader :weights
 
       # Return the mean of each cluster.
-      # @return [Numo::DFloat] (shape: [n_clusters, n_features])
+      # @return [Xumo::DFloat] (shape: [n_clusters, n_features])
       attr_reader :means
 
       # Return the diagonal elements of covariance matrix of each cluster.
-      # @return [Numo::DFloat] (shape: [n_clusters, n_features] if 'diag', [n_clusters, n_features, n_features] if 'full')
+      # @return [Xumo::DFloat] (shape: [n_clusters, n_features]) if 'diag', [n_clusters, n_features, n_features] if 'full')
       attr_reader :covariances
 
       # Create a new cluster analyzer with gaussian mixture model.
@@ -70,7 +70,7 @@ module Rumale
       #
       # @overload fit(x) -> GaussianMixture
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [GaussianMixture] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -93,8 +93,8 @@ module Rumale
 
       # Predict cluster labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         check_enable_linalg('predict')
@@ -105,8 +105,8 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         check_enable_linalg('fit_predict')
@@ -139,7 +139,7 @@ module Rumale
 
       def assign_cluster(memberships)
         n_clusters = memberships.shape[1]
-        memberships.max_index(axis: 1) - Numo::Int32[*0.step(memberships.size - 1, n_clusters)]
+        memberships.max_index(axis: 1) - Xumo::Int32[*0.step(memberships.size - 1, n_clusters)]
       end
 
       def init_memberships(x)
@@ -148,13 +148,13 @@ module Rumale
         )
         cluster_ids = kmeans.fit_predict(x)
         encoder = Rumale::Preprocessing::LabelBinarizer.new
-        Numo::DFloat.cast(encoder.fit_transform(cluster_ids))
+        Xumo::DFloat.cast(encoder.fit_transform(cluster_ids))
       end
 
       def calc_memberships(x, weights, means, covars, covar_type)
         n_samples = x.shape[0]
         n_clusters = means.shape[0]
-        memberships = Numo::DFloat.zeros(n_samples, n_clusters)
+        memberships = Xumo::DFloat.zeros(n_samples, n_clusters)
         n_clusters.times do |n|
           centered = x - means[n, true]
           covar = covar_type == 'full' ? covars[n, true, true] : covars[n, true]
@@ -185,14 +185,15 @@ module Rumale
           centered = x - means[n, true]
           memberships[true, n].dot(centered**2) / memberships[true, n].sum
         end
-        Numo::DFloat.asarray(diag_cov) + reg_cover
+
+        Xumo::DFloat.asarray(diag_cov) + reg_cover
       end
 
       def calc_full_covariances(x, means, reg_cover, memberships)
         n_features = x.shape[1]
         n_clusters = means.shape[0]
-        cov_mats = Numo::DFloat.zeros(n_clusters, n_features, n_features)
-        reg_mat = Numo::DFloat.eye(n_features) * reg_cover
+        cov_mats = Xumo::DFloat.zeros(n_clusters, n_features, n_features)
+        reg_mat = Xumo::DFloat.eye(n_features) * reg_cover
         n_clusters.times do |n|
           centered = x - means[n, true]
           members = memberships[true, n]
@@ -209,12 +210,12 @@ module Rumale
                     else
                       (centered * inv_covar * centered).sum(1)
                     end
-        weight * inv_sqrt_det_covar * Numo::NMath.exp(-0.5 * distances)
+        weight * inv_sqrt_det_covar * Xumo::NMath.exp(-0.5 * distances)
       end
 
       def calc_inv_covariance(covar, covar_type)
         if covar_type == 'full'
-          Numo::Linalg.inv(covar)
+          Xumo::Linalg.inv(covar)
         else
           1.0 / covar
         end
@@ -222,7 +223,7 @@ module Rumale
 
       def calc_inv_sqrt_det_covariance(covar, covar_type)
         if covar_type == 'full'
-          1.0 / Math.sqrt(Numo::Linalg.det(covar))
+          1.0 / Math.sqrt(Xumo::Linalg.det(covar))
         else
           1.0 / Math.sqrt(covar.prod)
         end
@@ -230,7 +231,7 @@ module Rumale
 
       def check_enable_linalg(method_name)
         if (@params[:covariance_type] == 'full') && !enable_linalg?
-          raise "GaussianMixture##{method_name} requires Numo::Linalg when covariance_type is 'full' but that is not loaded."
+          raise "GaussianMixture##{method_name} requires Xumo::Linalg when covariance_type is 'full' but that is not loaded."
         end
       end
     end

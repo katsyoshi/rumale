@@ -4,8 +4,8 @@ require 'spec_helper'
 
 RSpec.describe Rumale::Preprocessing::LabelBinarizer do
   let(:encoder) { described_class.new.fit(labels) }
-  let(:labels) { Numo::Int32[0, -1, 3, 3, 1, 1] }
-  let(:encoded_labels) { Numo::Int32[[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 1, 0], [0, 0, 1, 0]] }
+  let(:labels) { Xumo::Int32[0, -1, 3, 3, 1, 1] }
+  let(:encoded_labels) { Xumo::Int32[[0, 1, 0, 0], [1, 0, 0, 0], [0, 0, 0, 1], [0, 0, 0, 1], [0, 0, 1, 0], [0, 0, 1, 0]] }
 
   it 'encodes labels.' do
     encoder.fit_transform(labels)

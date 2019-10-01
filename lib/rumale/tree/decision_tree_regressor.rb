@@ -20,7 +20,7 @@ module Rumale
       include ExtDecisionTreeRegressor
 
       # Return the importance for each feature.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the learned tree.
@@ -32,7 +32,7 @@ module Rumale
       attr_reader :rng
 
       # Return the values assigned each leaf.
-      # @return [Numo::DFloat] (shape: [n_leafs, n_outputs])
+      # @return [Xumo::DFloat] (shape: [n_leafs, n_outputs])
       attr_reader :leaf_values
 
       # Create a new regressor with decision tree algorithm.
@@ -61,8 +61,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
       # @return [DecisionTreeRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -76,15 +76,15 @@ module Rumale
         @sub_rng = @rng.dup
         build_tree(x, y)
         eval_importance(n_samples, n_features)
-        @leaf_values = Numo::DFloat.cast(@leaf_values)
+        @leaf_values = Xumo::DFloat.cast(@leaf_values)
         @leaf_values = @leaf_values.flatten.dup if @leaf_values.shape[1] == 1
         self
       end
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         @leaf_values.shape[1].nil? ? @leaf_values[apply(x)].dup : @leaf_values[apply(x), true].dup

@@ -9,10 +9,10 @@ module Rumale
     #
     # @example
     #   encoder = Rumale::Preprocessing::LabelEncoder.new
-    #   labels = Numo::Int32[1, 8, 8, 15, 0]
+    #   labels = Xumo::Int32[1, 8, 8, 15, 0]
     #   encoded_labels = encoder.fit_transform(labels)
     #   # > pp encoded_labels
-    #   # Numo::Int32#shape=[5]
+    #   # Xumo::Int32#shape=[5]
     #   # [1, 2, 2, 3, 0]
     #   decoded_labels = encoder.inverse_transform(encoded_labels)
     #   # > pp decoded_labels
@@ -38,7 +38,7 @@ module Rumale
       # @param x [Array] (shape: [n_samples]) The labels to fit label-encoder.
       # @return [LabelEncoder]
       def fit(x, _y = nil)
-        x = x.to_a if x.is_a?(Numo::NArray)
+        x = x.to_a if x.is_a?(Xumo::NArray)
         check_params_type(Array, x: x)
         @classes = x.sort.uniq
         self
@@ -46,12 +46,12 @@ module Rumale
 
       # Fit label-encoder to labels, then return encoded labels.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
       # @param x [Array] (shape: [n_samples]) The labels to fit label-encoder.
-      # @return [Numo::Int32] The encoded labels.
+      # @return [Xumo::Int32] The encoded labels.
       def fit_transform(x, _y = nil)
-        x = x.to_a if x.is_a?(Numo::NArray)
+        x = x.to_a if x.is_a?(Xumo::NArray)
         check_params_type(Array, x: x)
         fit(x).transform(x)
       end
@@ -59,16 +59,16 @@ module Rumale
       # Encode labels.
       #
       # @param x [Array] (shape: [n_samples]) The labels to be encoded.
-      # @return [Numo::Int32] The encoded labels.
+      # @return [Xumo::Int32] The encoded labels.
       def transform(x)
-        x = x.to_a if x.is_a?(Numo::NArray)
+        x = x.to_a if x.is_a?(Xumo::NArray)
         check_params_type(Array, x: x)
-        Numo::Int32[*(x.map { |v| @classes.index(v) })]
+        Xumo::Int32[*(x.map { |v| @classes.index(v) })]
       end
 
       # Decode encoded labels.
       #
-      # @param x [Numo::Int32] (shape: [n_samples]) The labels to be decoded.
+      # @param x [Xumo::Int32] (shape: [n_samples]) The labels to be decoded.
       # @return [Array] The decoded labels.
       def inverse_transform(x)
         x = check_convert_label_array(x)

@@ -8,8 +8,8 @@ RSpec.describe Rumale::ModelSelection::StratifiedKFold do
   let(:n_features) { 3 }
   let(:n_training_samples) { n_samples - n_samples / n_splits }
   let(:n_testing_samples) { n_samples / n_splits }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
-  let(:labels) { Numo::Int32[0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2] }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
+  let(:labels) { Xumo::Int32[0, 0, 0, 0, 0, 0, 1, 1, 1, 2, 2, 2] }
 
   it 'splits the dataset.' do
     splitter = described_class.new(n_splits: n_splits)

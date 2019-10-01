@@ -34,15 +34,15 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
   end
 
   context 'when multiple regression problem' do
-    let(:y) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
+    let(:y) { Xumo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Xumo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
     let(:n_outputs) { y.shape[1] }
 
     it 'learns the model.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -50,15 +50,15 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
     end
 
     context 'when given array to reg_param' do
-      let(:reg_param) { Numo::DFloat[0.1, 0.5] }
+      let(:reg_param) { Xumo::DFloat[0.1, 0.5] }
 
       it 'learns the model.', :aggregate_failures do
-        expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+        expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
         expect(estimator.weight_vec.ndim).to eq(2)
         expect(estimator.weight_vec.shape[0]).to eq(n_samples)
         expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
         expect(estimator.params[:reg_param]).to eq(reg_param)
-        expect(predicted.class).to eq(Numo::DFloat)
+        expect(predicted.class).to eq(Xumo::DFloat)
         expect(predicted.ndim).to eq(2)
         expect(predicted.shape[0]).to eq(n_samples)
         expect(predicted.shape[1]).to eq(n_outputs)
@@ -74,12 +74,12 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
     end
 
     it 'raises ArgumentError when given non 1-D array to reg_param.' do
-      expect { described_class.new(reg_param: Numo::DFloat[[0.1, 0.2], [0.3, 0.4]]) }.to raise_error(ArgumentError)
+      expect { described_class.new(reg_param: Xumo::DFloat[[0.1, 0.2], [0.3, 0.4]]) }.to raise_error(ArgumentError)
     end
 
     it 'raises ArgumentError when given reg_param an array with a diffrent size from the target variable array.' do
-      estimator = described_class.new(reg_param: Numo::DFloat[0.1, 0.2, 0.3])
-      expect { estimator.fit(kernel_mat, Numo::DFloat.new(n_samples, 2).rand) }.to raise_error(ArgumentError)
+      estimator = described_class.new(reg_param: Xumo::DFloat[0.1, 0.2, 0.3])
+      expect { estimator.fit(kernel_mat, Xumo::DFloat.new(n_samples, 2).rand) }.to raise_error(ArgumentError)
     end
   end
 end

@@ -19,10 +19,10 @@ RSpec.describe Rumale::Manifold::MDS do
 
   it 'maps high-dimensional data into low-dimensional data.' do
     low_samples = mds.fit_transform(samples)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(mds.embedding.class).to eq(Numo::DFloat)
+    expect(mds.embedding.class).to eq(Xumo::DFloat)
     expect(mds.embedding.shape[0]).to eq(n_samples)
     expect(mds.embedding.shape[1]).to eq(n_components)
     expect(mds.n_iter).to eq(50)
@@ -33,10 +33,10 @@ RSpec.describe Rumale::Manifold::MDS do
 
   it 'maps high-dimensional data represented by distance matrix.' do
     low_samples = mds_metric.fit_transform(distance_matrix)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(mds_metric.embedding.class).to eq(Numo::DFloat)
+    expect(mds_metric.embedding.class).to eq(Xumo::DFloat)
     expect(mds_metric.embedding.shape[0]).to eq(n_samples)
     expect(mds_metric.embedding.shape[1]).to eq(n_components)
     expect(mds_metric.n_iter).to eq(50)
@@ -47,10 +47,10 @@ RSpec.describe Rumale::Manifold::MDS do
 
   it 'terminates optimization based on the tol parameter.' do
     low_samples = mds_tol.fit_transform(samples)
-    expect(low_samples.class).to eq(Numo::DFloat)
+    expect(low_samples.class).to eq(Xumo::DFloat)
     expect(low_samples.shape[0]).to eq(n_samples)
     expect(low_samples.shape[1]).to eq(n_components)
-    expect(mds_tol.embedding.class).to eq(Numo::DFloat)
+    expect(mds_tol.embedding.class).to eq(Xumo::DFloat)
     expect(mds_tol.embedding.shape[0]).to eq(n_samples)
     expect(mds_tol.embedding.shape[1]).to eq(n_components)
     expect(mds_tol.n_iter).to be < 50
@@ -60,7 +60,7 @@ RSpec.describe Rumale::Manifold::MDS do
   end
 
   # it 'raises ArgumentError when given a non-square matrix.' do
-  #   expect { mds_metric.fit(Numo::DFloat.new(5, 3).rand) }.to raise_error(ArgumentError)
+  #   expect { mds_metric.fit(Xumo::DFloat.new(5, 3).rand) }.to raise_error(ArgumentError)
   # end
 
   it 'outputs debug messages.' do

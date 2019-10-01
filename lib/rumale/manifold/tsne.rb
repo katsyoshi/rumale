@@ -26,7 +26,7 @@ module Rumale
       include Base::Transformer
 
       # Return the data in representation space.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components])
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components])
       attr_reader :embedding
 
       # Return the Kullback-Leibler divergence after optimization.
@@ -83,7 +83,7 @@ module Rumale
       #
       # @overload fit(x) -> TSNE
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [TSNE] The learned transformer itself.
       def fit(x, _not_used = nil)
@@ -96,7 +96,7 @@ module Rumale
         y = init_embedding(x)
         lo_prob_mat = t_distributed_probability_matrix(y)
         # perform fixed-point optimization.
-        one_vec = Numo::DFloat.ones(x.shape[0]).expand_dims(1)
+        one_vec = Xumo::DFloat.ones(x.shape[0]).expand_dims(1)
         @params[:max_iter].times do |t|
           break if terminate?(hi_prob_mat, lo_prob_mat)
           a = hi_prob_mat * lo_prob_mat
@@ -116,11 +116,11 @@ module Rumale
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _not_used = nil)
         fit(x)
         @embedding.dup
@@ -163,7 +163,7 @@ module Rumale
       def gaussian_distributed_probability_matrix(distance_mat)
         # initialize some variables.
         n_samples = distance_mat.shape[0]
-        prob_mat = Numo::DFloat.zeros(n_samples, n_samples)
+        prob_mat = Xumo::DFloat.zeros(n_samples, n_samples)
         sum_beta = 0.0
         # calculate conditional probabilities.
         n_samples.times do |n|
@@ -211,7 +211,7 @@ module Rumale
       end
 
       def gaussian_distributed_probability_vector(n, distance_vec, beta)
-        probs = Numo::NMath.exp(-beta * distance_vec)
+        probs = Xumo::NMath.exp(-beta * distance_vec)
         probs[n] = 0.0
         sum_probs = probs.sum
         probs /= sum_probs
@@ -227,7 +227,7 @@ module Rumale
       end
 
       def cost(p, q)
-        (p * Numo::NMath.log(Numo::DFloat.maximum(1e-20, p) / Numo::DFloat.maximum(1e-20, q))).sum
+        (p * Xumo::NMath.log(Xumo::DFloat.maximum(1e-20, p) / Xumo::DFloat.maximum(1e-20, q))).sum
       end
 
       def terminate?(p, q)

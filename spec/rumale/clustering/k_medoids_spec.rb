@@ -13,14 +13,14 @@ RSpec.describe Rumale::Clustering::KMedoids do
 
   it 'analyze cluster.', aggregate_failures: true do
     cluster_labels = analyzer.fit(x_mlt).predict(x_mlt)
-    expect(cluster_labels.class).to eq(Numo::Int32)
+    expect(cluster_labels.class).to eq(Xumo::Int32)
     expect(cluster_labels.size).to eq(x_mlt.shape[0])
     expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
     expect(cluster_labels.shape[1]).to be_nil
     expect(cluster_labels.eq(0).count).to eq(100)
     expect(cluster_labels.eq(1).count).to eq(100)
     expect(cluster_labels.eq(2).count).to eq(100)
-    expect(analyzer.medoid_ids.class).to eq(Numo::Int32)
+    expect(analyzer.medoid_ids.class).to eq(Xumo::Int32)
     expect(analyzer.medoid_ids.shape[0]).to eq(3)
     expect(analyzer.medoid_ids.shape[1]).to be_nil
     expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
@@ -29,23 +29,23 @@ RSpec.describe Rumale::Clustering::KMedoids do
   it 'analyze cluster with distance matrix.', aggregate_failures: true do
     analyzer_precomputed.fit(dist_mat)
     cluster_labels = analyzer_precomputed.predict(dist_mat[true, analyzer_precomputed.medoid_ids])
-    expect(cluster_labels.class).to eq(Numo::Int32)
+    expect(cluster_labels.class).to eq(Xumo::Int32)
     expect(cluster_labels.size).to eq(x_mlt.shape[0])
     expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
     expect(cluster_labels.shape[1]).to be_nil
     expect(cluster_labels.eq(0).count).to eq(100)
     expect(cluster_labels.eq(1).count).to eq(100)
     expect(cluster_labels.eq(2).count).to eq(100)
-    expect(analyzer_precomputed.medoid_ids.class).to eq(Numo::Int32)
+    expect(analyzer_precomputed.medoid_ids.class).to eq(Xumo::Int32)
     expect(analyzer_precomputed.medoid_ids.shape[0]).to eq(3)
     expect(analyzer_precomputed.medoid_ids.shape[1]).to be_nil
     expect(analyzer_precomputed.score(dist_mat, y_mlt)).to eq(1)
   end
 
   it 'raises ArgumentError when given a wrong shape matrix' do
-    expect { analyzer_precomputed.fit(Numo::DFloat.new(4, 2).rand) }.to raise_error(ArgumentError)
+    expect { analyzer_precomputed.fit(Xumo::DFloat.new(4, 2).rand) }.to raise_error(ArgumentError)
     analyzer_precomputed.fit(dist_mat)
-    expect { analyzer_precomputed.predict(Numo::DFloat.new(4, 10).rand) }.to raise_error(ArgumentError)
+    expect { analyzer_precomputed.predict(Xumo::DFloat.new(4, 10).rand) }.to raise_error(ArgumentError)
   end
 
   it 'initializes centroids with k-means++ algorithm.' do

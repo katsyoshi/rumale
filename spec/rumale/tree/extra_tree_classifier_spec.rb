@@ -70,7 +70,6 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
 
   context 'when max_depth parameter is given' do
     let(:max_depth) { 1 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x_mlt, y_mlt)
       expect(estimator.params[:max_depth]).to eq(max_depth)
@@ -83,7 +82,6 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
 
   context 'when max_leaf_nodes parameter is given' do
     let(:max_leaf_nodes) { 2 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x_mlt, y_mlt)
       expect(estimator.params[:max_leaf_nodes]).to eq(max_leaf_nodes)
@@ -93,7 +91,6 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
 
   context 'when min_samples_leaf parameter is given' do
     let(:min_samples_leaf) { 280 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x_mlt, y_mlt)
       expect(estimator.params[:min_samples_leaf]).to eq(min_samples_leaf)
@@ -104,26 +101,23 @@ RSpec.describe Rumale::Tree::ExtraTreeClassifier do
   end
 
   context 'when max_features parameter is given' do
-    context 'with negative value' do
+    context 'negative value' do
       let(:max_features) { -10 }
-
       it 'raises ArgumentError by validation' do
         expect { estimator }.to raise_error(ArgumentError)
       end
     end
 
-    context 'with value larger than number of features' do
+    context 'value larger than number of features' do
       let(:max_features) { 10 }
-
       it 'value of max_features is equal to the number of features' do
         estimator.fit(x_mlt, y_mlt)
         expect(estimator.params[:max_features]).to eq(x_mlt.shape[1])
       end
     end
 
-    context 'with valid value' do
+    context 'valid value' do
       let(:max_features) { 2 }
-
       it 'learns model with given parameters.' do
         estimator.fit(x_mlt, y_mlt)
         expect(estimator.params[:max_features]).to eq(2)

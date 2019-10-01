@@ -23,7 +23,7 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the cluster labels. The negative cluster label indicates that the point is noise.
-      # @return [Numo::Int32] (shape: [n_samples])
+      # @return [Xumo::Int32] (shape: [n_samples])
       attr_reader :labels
 
       # Create a new cluster analyzer with HDBSCAN algorithm.
@@ -49,7 +49,7 @@ module Rumale
       #
       # @overload fit(x) -> HDBSCAN
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [HDBSCAN] The learned cluster analyzer itself.
       def fit(x, _y = nil)
@@ -61,9 +61,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input distance matrix to be square.' if @params[:metric] == 'precomputed' && x.shape[0] != x.shape[1]
@@ -91,8 +91,8 @@ module Rumale
       # @!visibility private
       class UnionFind
         def initialize(n)
-          @parent = Numo::Int32.new(n).seq
-          @rank = Numo::Int32.zeros(n)
+          @parent = Xumo::Int32.new(n).seq
+          @rank = Xumo::Int32.zeros(n)
         end
 
         # @!visibility private
@@ -133,7 +133,7 @@ module Rumale
 
       def mutual_reachability_distances(distance_mat, min_samples)
         core_distances = distance_mat.sort(axis: 1)[true, min_samples + 1]
-        Numo::DFloat.maximum(core_distances.expand_dims(1), Numo::DFloat.maximum(core_distances, distance_mat))
+        Xumo::DFloat.maximum(core_distances.expand_dims(1), Xumo::DFloat.maximum(core_distances, distance_mat))
       end
 
       def breadth_first_search_hierarchy(hierarchy, root)
@@ -157,7 +157,7 @@ module Rumale
 
         node_ids = breadth_first_search_hierarchy(hierarchy, root)
 
-        relabel = Numo::Int32.zeros(root + 1)
+        relabel = Xumo::Int32.zeros(root + 1)
         relabel[root] = n_points
         res = []
         visited = {}
@@ -210,7 +210,7 @@ module Rumale
         root = tree.map(&:x).min
         child_max = tree.map(&:y).max
         child_max = root if child_max < root
-        densities = Numo::DFloat.zeros(child_max + 1) + Float::INFINITY
+        densities = Xumo::DFloat.zeros(child_max + 1) + Float::INFINITY
 
         current = tree[0].y
         density_min = tree[0].weight
@@ -270,7 +270,7 @@ module Rumale
         tree.each { |edge| uf.union(edge.x, edge.y) if cluster_label_map[edge.y].nil? }
 
         root = parent_arr.min
-        res = Numo::Int32.zeros(root)
+        res = Xumo::Int32.zeros(root)
         root.times do |n|
           cluster = uf.find(n)
           res[n] = cluster < root ? -1 : cluster_label_map[cluster] || -1

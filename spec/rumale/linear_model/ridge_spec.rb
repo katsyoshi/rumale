@@ -4,8 +4,8 @@ require 'spec_helper'
 
 RSpec.describe Rumale::LinearModel::Ridge do
   let(:x) { two_clusters_dataset[0] }
-  let(:single_target) { x.dot(Numo::DFloat[1.0, 2.0]) }
-  let(:multi_target) { x.dot(Numo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
+  let(:single_target) { x.dot(Xumo::DFloat[1.0, 2.0]) }
+  let(:multi_target) { x.dot(Xumo::DFloat[[1.0, 2.0], [2.0, 1.0]]) }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
   let(:n_outputs) { multi_target.shape[1] }
@@ -21,11 +21,11 @@ RSpec.describe Rumale::LinearModel::Ridge do
     let(:y) { single_target }
 
     it 'learns the model for single regression problem.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.bias_term).to be_zero
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)
@@ -65,11 +65,11 @@ RSpec.describe Rumale::LinearModel::Ridge do
     let(:y) { multi_target }
 
     it 'learns the model for multiple-regression problems.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)
@@ -82,11 +82,11 @@ RSpec.describe Rumale::LinearModel::Ridge do
     let(:fit_bias) { true }
 
     it 'learns the model for single regression problem with bias term.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(estimator.bias_term.class).to eq(Numo::DFloat)
+      expect(estimator.bias_term.class).to eq(Xumo::DFloat)
       expect(estimator.bias_term.ndim).to eq(1)
       expect(estimator.bias_term.shape[0]).to eq(n_outputs)
       expect(Math.sqrt((estimator.bias_term**2).sum)).not_to be_zero
@@ -99,11 +99,11 @@ RSpec.describe Rumale::LinearModel::Ridge do
     let(:n_jobs) { -1 }
 
     it 'learns the model for multiple-regression problems.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(2)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.weight_vec.shape[1]).to eq(n_outputs)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(2)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(predicted.shape[1]).to eq(n_outputs)

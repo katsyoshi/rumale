@@ -40,11 +40,11 @@ module Rumale
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
-        Numo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
+        Xumo::Int32[*(Array.new(x.shape[0]) { |n| apply_at_node(@tree, x[n, true]) })]
       end
 
       private
@@ -127,7 +127,7 @@ module Rumale
       end
 
       def eval_importance(n_samples, n_features)
-        @feature_importances = Numo::DFloat.zeros(n_features)
+        @feature_importances = Xumo::DFloat.zeros(n_features)
         eval_importance_at_node(@tree)
         @feature_importances /= n_samples
         normalizer = @feature_importances.sum

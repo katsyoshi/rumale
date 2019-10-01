@@ -41,7 +41,9 @@ module Rumale
 
     # @!visibility private
     def check_tvalue_array(y)
-      raise TypeError, 'Expect class of target value vector to be Numo::DFloat' unless y.is_a?(Numo::DFloat)
+      unless y.is_a?(Kernel.const_get("#{Xumo}").const_get("DFloat"))
+        raise TypeError, 'Expect class of target value vector to be Xumo::DFloat'
+      end
       nil
     end
 

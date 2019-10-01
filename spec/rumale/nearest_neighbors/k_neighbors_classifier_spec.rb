@@ -11,12 +11,12 @@ RSpec.describe Rumale::NearestNeighbors::KNeighborsClassifier do
   it 'classifies three clusters data.' do
     n_samples, n_features = samples.shape
     estimator.fit(samples, labels)
-    expect(estimator.prototypes.class).to eq(Numo::DFloat)
+    expect(estimator.prototypes.class).to eq(Xumo::DFloat)
     expect(estimator.prototypes.shape[0]).to eq(n_samples)
     expect(estimator.prototypes.shape[1]).to eq(n_features)
-    expect(estimator.labels.class).to eq(Numo::Int32)
+    expect(estimator.labels.class).to eq(Xumo::Int32)
     expect(estimator.labels.size).to eq(n_samples)
-    expect(estimator.classes.class).to eq(Numo::Int32)
+    expect(estimator.classes.class).to eq(Xumo::Int32)
     expect(estimator.classes.size).to eq(3)
     expect(estimator.score(samples, labels)).to eq(1.0)
   end

@@ -19,11 +19,11 @@ module Rumale
       include Base::Regressor
 
       # Return the prototypes for the nearest neighbor regressor.
-      # @return [Numo::DFloat] (shape: [n_samples, n_features])
+      # @return [Xumo::DFloat] (shape: [n_samples, n_features])
       attr_reader :prototypes
 
       # Return the values of the prototypes
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs])
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs])
       attr_reader :values
 
       # Create a new regressor with the nearest neighbor rule.
@@ -40,8 +40,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) The target values to be used for fitting the model.
       # @return [KNeighborsRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -54,8 +54,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         # Initialize some variables.
@@ -69,7 +69,7 @@ module Rumale
           neighbor_ids = distance_matrix[n, true].to_a.each_with_index.sort.map(&:last)[0...n_neighbors]
           n_outputs.nil? ? @values[neighbor_ids].mean : @values[neighbor_ids, true].mean(0).to_a
         end
-        Numo::DFloat[*predicted_values]
+        Xumo::DFloat[*predicted_values]
       end
 
       # Dump marshal data.

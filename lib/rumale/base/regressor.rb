@@ -21,8 +21,8 @@ module Rumale
 
       # Calculate the coefficient of determination for the given testing data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) Testing data.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) Target values for testing data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) Testing data.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) Target values for testing data.
       # @return [Float] Coefficient of determination
       def score(x, y)
         x = check_convert_sample_array(x)

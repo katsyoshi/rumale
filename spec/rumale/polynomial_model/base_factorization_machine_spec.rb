@@ -4,7 +4,7 @@ require 'spec_helper'
 
 RSpec.describe Rumale::PolynomialModel::BaseFactorizationMachine do
   let(:x) { two_clusters_dataset[0] }
-  let(:y) { x.dot(Numo::DFloat[1.0, 2.0]) }
+  let(:y) { x.dot(Xumo::DFloat[1.0, 2.0]) }
   let(:estimator) { described_class.new(random_seed: 1) }
 
   it 'raises NotImplementedError when calls partial_fit method.' do

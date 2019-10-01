@@ -14,8 +14,8 @@ module Rumale
 
       # Calculate explained variance score.
       #
-      # @param y_true [Numo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
-      # @param y_pred [Numo::DFloat] (shape: [n_samples, n_outputs]) Estimated target values.
+      # @param y_true [Xumo::DFloat] (shape: [n_samples, n_outputs]) Ground truth target values.
+      # @param y_pred [Xumo::DFloat] (shape: [n_samples, n_outputs]) Estimated target values.
       # @return [Float] Explained variance score.
       def score(y_true, y_pred)
         y_true = check_convert_tvalue_array(y_true)

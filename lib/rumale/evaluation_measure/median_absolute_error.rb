@@ -14,8 +14,8 @@ module Rumale
 
       # Calculate median absolute error.
       #
-      # @param y_true [Numo::DFloat] (shape: [n_samples]) Ground truth target values.
-      # @param y_pred [Numo::DFloat] (shape: [n_samples]) Estimated target values.
+      # @param y_true [Xumo::DFloat] (shape: [n_samples]) Ground truth target values.
+      # @param y_pred [Xumo::DFloat] (shape: [n_samples]) Estimated target values.
       # @return [Float] Median absolute error.
       def score(y_true, y_pred)
         y_true = check_convert_tvalue_array(y_true)

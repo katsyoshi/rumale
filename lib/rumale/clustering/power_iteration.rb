@@ -19,11 +19,11 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the data in embedded space.
-      # @return [Numo::DFloat] (shape: [n_samples])
+      # @return [Xumo::DFloat] (shape: [n_samples])
       attr_reader :embedding
 
       # Return the cluster labels.
-      # @return [Numo::Int32] (shape: [n_samples])
+      # @return [Xumo::Int32] (shape: [n_samples])
       attr_reader :labels
 
       # Return the number of iterations run for optimization
@@ -65,7 +65,7 @@ module Rumale
       #
       # @overload fit(x) -> PowerIteration
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [PowerIteration] The learned cluster analyzer itself.
       def fit(x, _y = nil)
@@ -77,9 +77,9 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
@@ -119,7 +119,7 @@ module Rumale
         iters = 0
         embedded_line = degrees / degrees.sum
         n_samples = embedded_line.shape[0]
-        error = Numo::DFloat.ones(n_samples)
+        error = Xumo::DFloat.ones(n_samples)
         max_iter.times do |t|
           iters = t + 1
           new_embedded_line = normalized_affinity_mat.dot(embedded_line)

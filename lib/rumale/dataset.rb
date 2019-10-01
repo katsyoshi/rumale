@@ -9,16 +9,16 @@ module Rumale
   # Module for loading and saving a dataset file.
   module Dataset
     class << self
-      # Load a dataset with the libsvm file format into Numo::NArray.
+      # Load a dataset with the libsvm file format into Xumo::NArray.
       #
       # @param filename [String] A path to a dataset file.
       # @param zero_based [Boolean] Whether the column index starts from 0 (true) or 1 (false).
-      # @param dtype [Numo::NArray] Data type of Numo::NArray for features to be loaded.
+      # @param dtype [Xumo::NArray] Data type of Xumo::NArray for features to be loaded.
       #
-      # @return [Array<Numo::NArray>]
+      # @return [Array<Xumo::NArray>]
       #   Returns array containing the (n_samples x n_features) matrix for feature vectors
       #   and (n_samples) vector for labels or target values.
-      def load_libsvm_file(filename, zero_based: false, dtype: Numo::DFloat)
+      def load_libsvm_file(filename, zero_based: false, dtype: Xumo::DFloat)
         ftvecs = []
         labels = []
         n_features = 0
@@ -28,13 +28,13 @@ module Rumale
           ftvecs.push(ftvec)
           n_features = max_idx if n_features < max_idx
         end
-        [convert_to_matrix(ftvecs, n_features, dtype), Numo::NArray.asarray(labels)]
+        [convert_to_matrix(ftvecs, n_features, dtype), Xumo::NArray.asarray(labels)]
       end
 
       # Dump the dataset with the libsvm file format.
       #
-      # @param data [Numo::NArray] (shape: [n_samples, n_features]) matrix consisting of feature vectors.
-      # @param labels [Numo::NArray] (shape: [n_samples]) matrix consisting of labels or target values.
+      # @param data [Xumo::NArray] (shape: [n_samples, n_features]) matrix consisting of feature vectors.
+      # @param labels [Xumo::NArray] (shape: [n_samples]) matrix consisting of labels or target values.
       # @param filename [String] A path to the output libsvm file.
       # @param zero_based [Boolean] Whether the column index starts from 0 (true) or 1 (false).
       def dump_libsvm_file(data, labels, filename, zero_based: false)
@@ -72,12 +72,12 @@ module Rumale
         n_samples_out = n_samples.fdiv(2).to_i
         n_samples_in = n_samples - n_samples_out
         # make two circles.
-        linsp_out = Numo::DFloat.linspace(0, 2 * Math::PI, n_samples_out)
-        linsp_in = Numo::DFloat.linspace(0, 2 * Math::PI, n_samples_in)
-        circle_out = Numo::DFloat[Numo::NMath.cos(linsp_out), Numo::NMath.sin(linsp_out)].transpose
-        circle_in = Numo::DFloat[Numo::NMath.cos(linsp_in), Numo::NMath.sin(linsp_in)].transpose
-        x = Numo::DFloat.vstack([circle_out, factor * circle_in])
-        y = Numo::Int32.hstack([Numo::Int32.zeros(n_samples_out), Numo::Int32.ones(n_samples_in)])
+        linsp_out = Xumo::DFloat.linspace(0, 2 * Math::PI, n_samples_out)
+        linsp_in = Xumo::DFloat.linspace(0, 2 * Math::PI, n_samples_in)
+        circle_out = Xumo::DFloat[Xumo::NMath.cos(linsp_out), Xumo::NMath.sin(linsp_out)].transpose
+        circle_in = Xumo::DFloat[Xumo::NMath.cos(linsp_in), Xumo::NMath.sin(linsp_in)].transpose
+        x = Xumo::DFloat.vstack([circle_out, factor * circle_in])
+        y = Xumo::Int32.hstack([Xumo::Int32.zeros(n_samples_out), Xumo::Int32.ones(n_samples_in)])
         # shuffle data indices.
         if shuffle
           rand_ids = [*0...n_samples].shuffle(random: rng.dup)
@@ -108,12 +108,12 @@ module Rumale
         n_samples_out = n_samples.fdiv(2).to_i
         n_samples_in = n_samples - n_samples_out
         # make two half circles.
-        linsp_out = Numo::DFloat.linspace(0, Math::PI, n_samples_out)
-        linsp_in = Numo::DFloat.linspace(0, Math::PI, n_samples_in)
-        circle_out = Numo::DFloat[Numo::NMath.cos(linsp_out), Numo::NMath.sin(linsp_out)].transpose
-        circle_in = Numo::DFloat[1 - Numo::NMath.cos(linsp_in), 1 - Numo::NMath.sin(linsp_in) - 0.5].transpose
-        x = Numo::DFloat.vstack([circle_out, circle_in])
-        y = Numo::Int32.hstack([Numo::Int32.zeros(n_samples_out), Numo::Int32.ones(n_samples_in)])
+        linsp_out = Xumo::DFloat.linspace(0, Math::PI, n_samples_out)
+        linsp_in = Xumo::DFloat.linspace(0, Math::PI, n_samples_in)
+        circle_out = Xumo::DFloat[Xumo::NMath.cos(linsp_out), Xumo::NMath.sin(linsp_out)].transpose
+        circle_in = Xumo::DFloat[1 - Xumo::NMath.cos(linsp_in), 1 - Xumo::NMath.sin(linsp_in) - 0.5].transpose
+        x = Xumo::DFloat.vstack([circle_out, circle_in])
+        y = Xumo::Int32.hstack([Xumo::Int32.zeros(n_samples_out), Xumo::Int32.ones(n_samples_in)])
         # shuffle data indices.
         if shuffle
           rand_ids = [*0...n_samples].shuffle(random: rng.dup)
@@ -211,11 +211,11 @@ module Rumale
       end
 
       def detect_dtype(data)
-        arr_type_str = Numo::NArray.array_type(data).to_s
+        arr_type_str = Xumo::NArray.array_type(data).to_s
         type = '%s'
-        type = '%d' if ['Numo::Int8', 'Numo::Int16', 'Numo::Int32', 'Numo::Int64'].include?(arr_type_str)
-        type = '%d' if ['Numo::UInt8', 'Numo::UInt16', 'Numo::UInt32', 'Numo::UInt64'].include?(arr_type_str)
-        type = '%.10g' if ['Numo::SFloat', 'Numo::DFloat'].include?(arr_type_str)
+        type = '%d' if ['Xumo::Int8', 'Xumo::Int16', 'Xumo::Int32', 'Xumo::Int64'].include?(arr_type_str)
+        type = '%d' if ['Xumo::UInt8', 'Xumo::UInt16', 'Xumo::UInt32', 'Xumo::UInt64'].include?(arr_type_str)
+        type = '%.10g' if ['Xumo::SFloat', 'Xumo::DFloat'].include?(arr_type_str)
         type
       end
 

@@ -22,7 +22,7 @@ module Rumale
       include Base::Transformer
 
       # Return the data in representation space.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components])
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components])
       attr_reader :embedding
 
       # Return the stress function value after optimization.
@@ -77,7 +77,7 @@ module Rumale
       #
       # @overload fit(x) -> MDS
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
       # @return [MDS] The learned transformer itself.
       def fit(x, _not_used = nil)
@@ -116,11 +116,11 @@ module Rumale
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       #   If the metric is 'precomputed', x must be a square distance matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _not_used = nil)
         fit(x)
         @embedding.dup

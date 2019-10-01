@@ -32,7 +32,7 @@ module Rumale
 
       # Return the importance for each feature.
       # The feature importances are calculated based on the numbers of times the feature is used for splitting.
-      # @return [Numo::DFloat] (size: n_features)
+      # @return [Xumo::DFloat] (size: n_features)
       attr_reader :feature_importances
 
       # Return the random generator for random selection of feature index.
@@ -87,8 +87,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples]) The target values to be used for fitting the model.
       # @return [GradientBoostingRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -117,8 +117,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
@@ -135,8 +135,8 @@ module Rumale
 
       # Return the index of the leaf that each sample reached.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::Int32] (shape: [n_samples, n_estimators]) Leaf index for sample.
       def apply(x)
         x = check_convert_sample_array(x)
         n_outputs = @estimators.first.is_a?(Array) ? @estimators.size : 1
@@ -145,7 +145,7 @@ module Rumale
                    else
                      @estimators.map { |tree| tree.apply(x) }
                    end
-        Numo::Int32[*leaf_ids].transpose
+        Xumo::Int32[*leaf_ids].transpose
       end
 
       # Dump marshal data.
@@ -177,7 +177,7 @@ module Rumale
         n_samples = x.shape[0]
         n_sub_samples = [n_samples, [(n_samples * @params[:subsample]).to_i, 1].max].min
         whole_ids = Array.new(n_samples) { |v| v }
-        y_pred = Numo::DFloat.ones(n_samples) * init_pred
+        y_pred = Xumo::DFloat.ones(n_samples) * init_pred
         sub_rng = @rng.dup
         # grow trees.
         @params[:n_estimators].times do |_t|
@@ -209,7 +209,7 @@ module Rumale
       end
 
       def hessian(n_samples)
-        Numo::DFloat.ones(n_samples)
+        Xumo::DFloat.ones(n_samples)
       end
 
       def plant_tree(sub_rng)
@@ -252,7 +252,7 @@ module Rumale
                 @estimators[n].map { |tree| tree.predict(x) }.reduce(&:+)
               end
             end
-        Numo::DFloat.asarray(p).transpose + @base_predictions
+        Xumo::DFloat.asarray(p).transpose + @base_predictions
       end
     end
   end

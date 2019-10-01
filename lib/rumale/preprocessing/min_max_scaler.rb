@@ -17,11 +17,11 @@ module Rumale
       include Base::Transformer
 
       # Return the vector consists of the minimum value for each feature.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :min_vec
 
       # Return the vector consists of the maximum value for each feature.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :max_vec
 
       # Creates a new normalizer for scaling each feature to a given range.
@@ -39,7 +39,7 @@ module Rumale
       #
       # @overload fit(x) -> MinMaxScaler
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
       # @return [MinMaxScaler]
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -50,10 +50,10 @@ module Rumale
 
       # Calculate the minimum and maximum values, and then normalize samples to feature_range.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
-      # @return [Numo::DFloat] The scaled samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the minimum and maximum values.
+      # @return [Xumo::DFloat] The scaled samples.
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x).transform(x)
@@ -61,8 +61,8 @@ module Rumale
 
       # Perform scaling the given samples according to feature_range.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
-      # @return [Numo::DFloat] The scaled samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be scaled.
+      # @return [Xumo::DFloat] The scaled samples.
       def transform(x)
         x = check_convert_sample_array(x)
         n_samples, = x.shape

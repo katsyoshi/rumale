@@ -5,9 +5,9 @@ require 'spec_helper'
 RSpec.describe Rumale::Preprocessing::MinMaxScaler do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand }
   let(:sparse_samples) do
-    x = Numo::DFloat.new(n_samples, 128).rand - 0.8
+    x = Xumo::DFloat.new(n_samples, 128).rand - 0.8
     0.5 * (x + x.abs)
   end
 
@@ -16,10 +16,10 @@ RSpec.describe Rumale::Preprocessing::MinMaxScaler do
     normalized = normalizer.fit_transform(samples)
     expect(normalized.min).to eq(0)
     expect(normalized.max).to eq(1)
-    expect(normalizer.min_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.min_vec.class).to eq(Xumo::DFloat)
     expect(normalizer.min_vec.shape[0]).to eq(n_features)
     expect(normalizer.min_vec.shape[1]).to be_nil
-    expect(normalizer.max_vec.class).to eq(Numo::DFloat)
+    expect(normalizer.max_vec.class).to eq(Xumo::DFloat)
     expect(normalizer.max_vec.shape[0]).to eq(n_features)
     expect(normalizer.max_vec.shape[1]).to be_nil
   end

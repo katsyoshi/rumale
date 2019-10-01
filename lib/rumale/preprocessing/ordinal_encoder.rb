@@ -10,19 +10,19 @@ module Rumale
     # @example
     #   encoder = Rumale::Preprocessing::OrdinalEncoder.new
     #   training_samples = [['left', 10], ['right', 15], ['right', 20]]
-    #   training_samples = Numo::NArray.asarray(training_samples)
+    #   training_samples = Xumo::NArray.asarray(training_samples)
     #   encoder.fit(training_samples)
     #   p encoder.categories
     #   # [["left", "right"], [10, 15, 20]]
     #   testing_samples = [['left', 20], ['right', 10]]
-    #   testing_samples = Numo::NArray.asarray(testing_samples)
+    #   testing_samples = Xumo::NArray.asarray(testing_samples)
     #   encoded = encoder.transform(testing_samples)
     #   p encoded
-    #   # Numo::DFloat#shape=[2,2]
+    #   # Xumo::DFloat#shape=[2,2]
     #   # [[0, 2],
     #   #  [1, 0]]
     #   p encoder.inverse_transform(encoded)
-    #   # Numo::RObject#shape=[2,2]
+    #   # Xumo::RObject#shape=[2,2]
     #   # [["left", 20],
     #   #  ["right", 10]]
     class OrdinalEncoder
@@ -46,10 +46,10 @@ module Rumale
       #
       # @overload fit(x) -> OrdinalEncoder
       #
-      # @param x [Numo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
+      # @param x [Xumo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
       # @return [LabelEncoder]
       def fit(x, _y = nil)
-        raise TypeError, 'Expect class of sample matrix to be Numo::NArray' unless x.is_a?(Numo::NArray)
+        raise TypeError, 'Expect class of sample matrix to be Xumo::NArray' unless x.is_a?(Xumo::NArray)
         raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
         n_features = x.shape[1]
         @categories = Array.new(n_features) { |n| x[true, n].to_a.uniq.sort }
@@ -58,22 +58,22 @@ module Rumale
 
       # Fit encoder, then return encoded categorical features to integer values.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
-      # @return [Numo::DFloat] The encoded categorical features to integer values.
+      # @param x [Xumo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
+      # @return [Xumo::DFloat] The encoded categorical features to integer values.
       def fit_transform(x, _y = nil)
-        raise TypeError, 'Expect class of sample matrix to be Numo::NArray' unless x.is_a?(Numo::NArray)
+        raise TypeError, 'Expect class of sample matrix to be Xumo::NArray' unless x.is_a?(Xumo::NArray)
         raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
         fit(x).transform(x)
       end
 
       # Encode categorical features.
       #
-      # @param x [Numo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
-      # @return [Numo::DFloat] The encoded categorical features to integer values.
+      # @param x [Xumo::NArray] (shape: [n_samples, n_features]) The samples consisting of categorical features.
+      # @return [Xumo::DFloat] The encoded categorical features to integer values.
       def transform(x)
-        raise TypeError, 'Expect class of sample matrix to be Numo::NArray' unless x.is_a?(Numo::NArray)
+        raise TypeError, 'Expect class of sample matrix to be Xumo::NArray' unless x.is_a?(Xumo::NArray)
         raise ArgumentError, 'Expect sample matrix to be 2-D array' unless x.shape.size == 2
 
         n_features = x.shape[1]
@@ -83,13 +83,13 @@ module Rumale
           x[true, n].to_a.map { |v| @categories[n].index(v) }
         end
 
-        Numo::DFloat.asarray(transformed.transpose)
+        Xumo::DFloat.asarray(transformed.transpose)
       end
 
       # Decode values to categorical features.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples consisting of values transformed from categorical features.
-      # @return [Numo::NArray] The decoded features.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples consisting of values transformed from categorical features.
+      # @return [Xumo::NArray] The decoded features.
       def inverse_transform(x)
         x = check_convert_sample_array(x)
 
@@ -100,7 +100,7 @@ module Rumale
           x[true, n].to_a.map { |i| @categories[n][i.to_i] }
         end
 
-        Numo::NArray.asarray(inv_transformed.transpose)
+        Xumo::NArray.asarray(inv_transformed.transpose)
       end
 
       # Dump marshal data.

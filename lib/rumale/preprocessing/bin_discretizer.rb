@@ -10,17 +10,17 @@ module Rumale
     #
     # @example
     #   discretizer = Rumale::Preprocessing::BinDiscretizer.new(n_bins: 4)
-    #   samples = Numo::DFloat.new(5, 2).rand - 0.5
+    #   samples = Xumo::DFloat.new(5, 2).rand - 0.5
     #   transformed = discretizer.fit_transform(samples)
     #   # > pp samples
-    #   # Numo::DFloat#shape=[5,2]
+    #   # Xumo::DFloat#shape=[5,2]
     #   # [[-0.438246, -0.126933],
     #   #  [ 0.294815, -0.298958],
     #   #  [-0.383959, -0.155968],
     #   #  [ 0.039948,  0.237815],
     #   #  [-0.334911, -0.449117]]
     #   # > pp transformed
-    #   # Numo::DFloat#shape=[5,2]
+    #   # Xumo::DFloat#shape=[5,2]
     #   # [[0, 1],
     #   #  [3, 0],
     #   #  [0, 1],
@@ -31,7 +31,7 @@ module Rumale
       include Base::Transformer
 
       # Return the feature steps to be used discretizing.
-      # @return [Array<Numo::DFloat>] (shape: [n_features, n_bins])
+      # @return [Array<Xumo::DFloat>] (shape: [n_features, n_bins])
       attr_reader :feature_steps
 
       # Create a new discretizer for features with given number of bins.
@@ -47,7 +47,7 @@ module Rumale
       #
       # @overload fit(x) -> BinDiscretizer
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the feature ranges.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to calculate the feature ranges.
       # @return [BinDiscretizer]
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -55,17 +55,17 @@ module Rumale
         max_vals = x.max(0)
         min_vals = x.min(0)
         @feature_steps = Array.new(n_features) do |n|
-          Numo::DFloat.linspace(min_vals[n], max_vals[n], @params[:n_bins] + 1)[0...@params[:n_bins]]
+          Xumo::DFloat.linspace(min_vals[n], max_vals[n], @params[:n_bins] + 1)[0...@params[:n_bins]]
         end
         self
       end
 
       # Fit feature ranges to be discretized, then return discretized samples.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
+      # @overload fit_transform(x) -> Xumo::DFloat
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
-      # @return [Numo::DFloat] The discretized samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
+      # @return [Xumo::DFloat] The discretized samples.
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
         fit(x).transform(x)
@@ -73,12 +73,12 @@ module Rumale
 
       # Peform discretizing the given samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
-      # @return [Numo::DFloat] The discretized samples.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be discretized.
+      # @return [Xumo::DFloat] The discretized samples.
       def transform(x)
         x = check_convert_sample_array(x)
         n_samples, n_features = x.shape
-        transformed = Numo::DFloat.zeros(n_samples, n_features)
+        transformed = Xumo::DFloat.zeros(n_samples, n_features)
         n_features.times do |n|
           steps = @feature_steps[n]
           @params[:n_bins].times do |bin|

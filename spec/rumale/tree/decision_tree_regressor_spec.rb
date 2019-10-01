@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Rumale::Tree::DecisionTreeRegressor do
   let(:x) { two_clusters_dataset[0] }
   let(:y) { x[true, 0] + x[true, 1]**2 }
-  let(:y_mult) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
+  let(:y_mult) { Xumo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Xumo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
   let(:max_depth) { nil }
   let(:max_leaf_nodes) { nil }
   let(:min_samples_leaf) { 1 }
@@ -22,15 +22,15 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
     estimator.fit(x, y)
 
     expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
-    expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+    expect(estimator.leaf_values.class).to eq(Xumo::DFloat)
     expect(estimator.leaf_values.shape[0]).not_to be_zero
     expect(estimator.leaf_values.shape[1]).to be_nil
 
     predicted = estimator.predict(x)
-    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.class).to eq(Xumo::DFloat)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to be_nil
     expect(estimator.score(x, y)).to be_within(0.01).of(1.0)
@@ -43,15 +43,15 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
     estimator.fit(x, y_mult)
 
     expect(estimator.tree.class).to eq(Rumale::Tree::Node)
-    expect(estimator.feature_importances.class).to eq(Numo::DFloat)
+    expect(estimator.feature_importances.class).to eq(Xumo::DFloat)
     expect(estimator.feature_importances.shape[0]).to eq(n_features)
     expect(estimator.feature_importances.shape[1]).to be_nil
-    expect(estimator.leaf_values.class).to eq(Numo::DFloat)
+    expect(estimator.leaf_values.class).to eq(Xumo::DFloat)
     expect(estimator.leaf_values.shape[0]).not_to be_zero
     expect(estimator.leaf_values.shape[1]).to eq(n_outputs)
 
     predicted = estimator.predict(x)
-    expect(predicted.class).to eq(Numo::DFloat)
+    expect(predicted.class).to eq(Xumo::DFloat)
     expect(predicted.shape[0]).to eq(n_samples)
     expect(predicted.shape[1]).to eq(n_outputs)
     expect(estimator.score(x, y_mult)).to be_within(0.01).of(1.0)
@@ -69,7 +69,6 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
 
   context 'when max_depth parameter is given' do
     let(:max_depth) { 1 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x, y)
       expect(estimator.params[:max_depth]).to eq(max_depth)
@@ -82,7 +81,6 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
 
   context 'when max_leaf_nodes parameter is given' do
     let(:max_leaf_nodes) { 2 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x, y)
       expect(estimator.params[:max_leaf_nodes]).to eq(max_leaf_nodes)
@@ -92,7 +90,6 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
 
   context 'when min_samples_leaf parameter is given' do
     let(:min_samples_leaf) { 90 }
-
     it 'learns model with given parameters.' do
       estimator.fit(x, y)
       expect(estimator.params[:min_samples_leaf]).to eq(min_samples_leaf)
@@ -104,26 +101,23 @@ RSpec.describe Rumale::Tree::DecisionTreeRegressor do
   end
 
   context 'when max_features parameter is given' do
-    context 'with negative value' do
+    context 'negative value' do
       let(:max_features) { -10 }
-
       it 'raises ArgumentError by validation' do
         expect { estimator }.to raise_error(ArgumentError)
       end
     end
 
-    context 'with value larger than number of features' do
+    context 'value larger than number of features' do
       let(:max_features) { 10 }
-
       it 'value of max_features is equal to the number of features' do
         estimator.fit(x, y)
         expect(estimator.params[:max_features]).to eq(x.shape[1])
       end
     end
 
-    context 'with valid value' do
+    context 'valid value' do
       let(:max_features) { 2 }
-
       it 'learns model with given parameters.' do
         estimator.fit(x, y)
         expect(estimator.params[:max_features]).to eq(2)

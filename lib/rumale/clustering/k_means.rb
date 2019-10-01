@@ -21,7 +21,7 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the centroids.
-      # @return [Numo::DFloat] (shape: [n_clusters, n_features])
+      # @return [Xumo::DFloat] (shape: [n_clusters, n_features])
       attr_reader :cluster_centers
 
       # Return the random generator.
@@ -55,7 +55,7 @@ module Rumale
       #
       # @overload fit(x) -> KMeans
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       # @return [KMeans] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
@@ -67,7 +67,7 @@ module Rumale
             assigned_bits = cluster_labels.eq(n)
             @cluster_centers[n, true] = x[assigned_bits.where, true].mean(axis: 0) if assigned_bits.count.positive?
           end
-          error = Numo::NMath.sqrt(((old_centers - @cluster_centers)**2).sum(axis: 1)).mean
+          error = Xumo::NMath.sqrt(((old_centers - @cluster_centers)**2).sum(axis: 1)).mean
           break if error <= @params[:tol]
         end
         self
@@ -75,8 +75,8 @@ module Rumale
 
       # Predict cluster labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the cluster label.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         assign_cluster(x)
@@ -84,8 +84,8 @@ module Rumale
 
       # Analysis clusters and assign samples to clusters.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         fit(x)
@@ -113,7 +113,7 @@ module Rumale
 
       def assign_cluster(x)
         distance_matrix = PairwiseMetric.euclidean_distance(x, @cluster_centers)
-        distance_matrix.min_index(axis: 1) - Numo::Int32[*0.step(distance_matrix.size - 1, @cluster_centers.shape[0])]
+        distance_matrix.min_index(axis: 1) - Xumo::Int32[*0.step(distance_matrix.size - 1, @cluster_centers.shape[0])]
       end
 
       def init_cluster_centers(x)

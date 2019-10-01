@@ -52,8 +52,8 @@ module Rumale
         # Initialize some variables.
         n_samples, n_features = x.shape
         rand_ids = [*0...n_samples].shuffle(random: @rng.dup)
-        weight_vec = Numo::DFloat.zeros(n_features + 1)
-        factor_mat = Numo::DFloat.zeros(@params[:n_factors], n_features)
+        weight_vec = Xumo::DFloat.zeros(n_features + 1)
+        factor_mat = Xumo::DFloat.zeros(@params[:n_factors], n_features)
         weight_optimizer = @params[:optimizer].dup
         factor_optimizers = Array.new(@params[:n_factors]) { @params[:optimizer].dup }
         # Start optimization.
@@ -91,7 +91,7 @@ module Rumale
       end
 
       def expand_feature(x)
-        Numo::NArray.hstack([x, Numo::DFloat.ones([x.shape[0], 1])])
+        Xumo::NArray.hstack([x, Xumo::DFloat.ones([x.shape[0], 1])])
       end
 
       def split_weight_vec_bias(weight_vec)

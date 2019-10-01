@@ -23,11 +23,11 @@ module Rumale
       include Base::ClusterAnalyzer
 
       # Return the data in embedded space.
-      # @return [Numo::DFloat] (shape: [n_samples, n_clusters])
+      # @return [Xumo::DFloat] (shape: [n_samples, n_clusters])
       attr_reader :embedding
 
       # Return the cluster labels.
-      # @return [Numo::Int32] (shape: [n_samples])
+      # @return [Xumo::Int32] (shape: [n_samples])
       attr_reader :labels
 
       # Create a new cluster analyzer with normalized spectral clustering.
@@ -60,31 +60,31 @@ module Rumale
       end
 
       # Analysis clusters with given training data.
-      # To execute this method, Numo::Linalg must be loaded.
+      # To execute this method, Xumo::Linalg must be loaded.
       #
       # @overload fit(x) -> SpectralClustering
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #     If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
       # @return [SpectralClustering] The learned cluster analyzer itself.
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
-        raise 'SpectralClustering#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'SpectralClustering#fit requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         fit_predict(x)
         self
       end
 
       # Analysis clusters and assign samples to clusters.
-      # To execute this method, Numo::Linalg must be loaded.
+      # To execute this method, Xumo::Linalg must be loaded.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for cluster analysis.
       #   If the metric is 'precomputed', x must be a square affinity matrix (shape: [n_samples, n_samples]).
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted cluster label per sample.
       def fit_predict(x)
         x = check_convert_sample_array(x)
         raise ArgumentError, 'Expect the input affinity matrix to be square.' if @params[:affinity] == 'precomputed' && x.shape[0] != x.shape[1]
-        raise 'SpectralClustering#fit_predict requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'SpectralClustering#fit_predict requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         affinity_mat = @params[:metric] == 'precomputed' ? x : Rumale::PairwiseMetric.rbf_kernel(x, nil, @params[:gamma])
         @embedding = embedded_space(affinity_mat, @params[:n_clusters])
@@ -113,11 +113,11 @@ module Rumale
 
       def embedded_space(affinity_mat, n_clusters)
         affinity_mat[affinity_mat.diag_indices] = 0.0
-        degrees = 1.0 / Numo::NMath.sqrt(affinity_mat.sum(axis: 1))
+        degrees = 1.0 / Xumo::NMath.sqrt(affinity_mat.sum(axis: 1))
         laplacian_mat = degrees.diag.dot(affinity_mat).dot(degrees.diag)
 
         n_samples = affinity_mat.shape[0]
-        _, eig_vecs = Numo::Linalg.eigh(laplacian_mat, vals_range: (n_samples - n_clusters)...n_samples)
+        _, eig_vecs = Xumo::Linalg.eigh(laplacian_mat, vals_range: (n_samples - n_clusters)...n_samples)
         eig_vecs.reverse(1).dup
       end
 

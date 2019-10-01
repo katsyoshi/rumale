@@ -5,14 +5,14 @@ require 'spec_helper'
 RSpec.describe Rumale::Preprocessing::BinDiscretizer do
   let(:n_samples) { 10 }
   let(:n_features) { 4 }
-  let(:samples) { Numo::DFloat.new(n_samples, n_features).rand - 0.5 }
+  let(:samples) { Xumo::DFloat.new(n_samples, n_features).rand - 0.5 }
   let(:n_bins) { 8 }
   let(:discretizer) { described_class.new(n_bins: n_bins) }
 
   it 'discretizes with k-bins.' do
     transformed = discretizer.fit_transform(samples)
     expect(discretizer.feature_steps.class).to eq(Array)
-    expect(discretizer.feature_steps[0].class).to eq(Numo::DFloat)
+    expect(discretizer.feature_steps[0].class).to eq(Xumo::DFloat)
     expect(discretizer.feature_steps.size).to eq(n_features)
     expect(discretizer.feature_steps[0].size).to eq(n_bins)
     expect(transformed.shape[0]).to eq(n_samples)

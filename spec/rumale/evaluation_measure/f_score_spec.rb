@@ -3,10 +3,10 @@
 require 'spec_helper'
 
 RSpec.describe Rumale::EvaluationMeasure::FScore do
-  let(:bin_ground_truth) { Numo::Int32[1, 1, 1, 1, -1, -1, -1, -1] }
-  let(:bin_predicted) { Numo::Int32[-1, -1, 1, 1, -1, -1, 1, 1] }
-  let(:mult_ground_truth) { Numo::Int32[0, 1, 2, 0, 1, 2, 3, 3, 0, 0] }
-  let(:mult_predicted) { Numo::Int32[0, 2, 1, 2, 1, 0, 3, 3, 0, 0] }
+  let(:bin_ground_truth) { Xumo::Int32[1, 1, 1, 1, -1, -1, -1, -1] }
+  let(:bin_predicted) { Xumo::Int32[-1, -1, 1, 1, -1, -1, 1, 1] }
+  let(:mult_ground_truth) { Xumo::Int32[0, 1, 2, 0, 1, 2, 3, 3, 0, 0] }
+  let(:mult_predicted) { Xumo::Int32[0, 2, 1, 2, 1, 0, 3, 3, 0, 0] }
 
   it 'calculates average F1-score for binary classification task.' do
     evaluator = described_class.new(average: 'binary')
