@@ -39,7 +39,7 @@ RSpec.describe Rumale::Base::BaseEstimator do
       after { Xumo::Linalg = @backup }
 
       it 'returns false' do
-        expect { dummy.linalg? }.to output(/you should install and load Numo::Linalg in advance./).to_stderr
+        expect { dummy.linalg? }.to output(/you should install and load Xumo::Linalg in advance./).to_stderr
         expect(dummy).not_to be_linalg
       end
     end
