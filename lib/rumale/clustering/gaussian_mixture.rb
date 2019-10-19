@@ -203,7 +203,7 @@ module Rumale
       end
 
       def calc_unnormalized_membership(centered, weight, covar, covar_type)
-        inv_covar = calc_inv_covariance(covar, covar_type)
+        inv_covar = Xumo::DFloat[*calc_inv_covariance(covar, covar_type).to_a]
         inv_sqrt_det_covar = calc_inv_sqrt_det_covariance(covar, covar_type)
         distances = if covar_type == 'full'
                       (centered.dot(inv_covar) * centered).sum(1)
@@ -215,7 +215,7 @@ module Rumale
 
       def calc_inv_covariance(covar, covar_type)
         if covar_type == 'full'
-          Xumo::Linalg.inv(covar)
+          Xumo::Linalg.inv(Numo::DFloat[*covar.to_a])
         else
           1.0 / covar
         end
@@ -223,7 +223,7 @@ module Rumale
 
       def calc_inv_sqrt_det_covariance(covar, covar_type)
         if covar_type == 'full'
-          1.0 / Math.sqrt(Xumo::Linalg.det(covar))
+          1.0 / Math.sqrt(Xumo::Linalg.det(Numo::DFloat[*covar.to_a]))
         else
           1.0 / Math.sqrt(covar.prod)
         end
