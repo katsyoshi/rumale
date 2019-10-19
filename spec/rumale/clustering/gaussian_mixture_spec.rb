@@ -13,20 +13,20 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
 
   context 'when covariance matrix is diagonal matrix' do
     it 'analyze cluster.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.size).to eq(x_mlt.shape[0])
       expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.weights.class).to eq(Numo::DFloat)
+      expect(analyzer.weights.class).to eq(Xumo::DFloat)
       expect(analyzer.weights.shape[0]).to eq(3)
       expect(analyzer.weights.shape[1]).to be_nil
-      expect(analyzer.means.class).to eq(Numo::DFloat)
+      expect(analyzer.means.class).to eq(Xumo::DFloat)
       expect(analyzer.means.shape[0]).to eq(3)
       expect(analyzer.means.shape[1]).to eq(2)
-      expect(analyzer.covariances.class).to eq(Numo::DFloat)
+      expect(analyzer.covariances.class).to eq(Xumo::DFloat)
       expect(analyzer.covariances.ndim).to eq(2)
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
@@ -38,20 +38,20 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
     let(:covariance_type) { 'full' }
 
     it 'analyze cluster.', aggregate_failures: true do
-      expect(cluster_labels.class).to eq(Numo::Int32)
+      expect(cluster_labels.class).to eq(Xumo::Int32)
       expect(cluster_labels.size).to eq(x_mlt.shape[0])
       expect(cluster_labels.shape[0]).to eq(x_mlt.shape[0])
       expect(cluster_labels.shape[1]).to be_nil
       expect(cluster_labels.eq(0).count).to eq(100)
       expect(cluster_labels.eq(1).count).to eq(100)
       expect(cluster_labels.eq(2).count).to eq(100)
-      expect(analyzer.weights.class).to eq(Numo::DFloat)
+      expect(analyzer.weights.class).to eq(Xumo::DFloat)
       expect(analyzer.weights.shape[0]).to eq(3)
       expect(analyzer.weights.shape[1]).to be_nil
-      expect(analyzer.means.class).to eq(Numo::DFloat)
+      expect(analyzer.means.class).to eq(Xumo::DFloat)
       expect(analyzer.means.shape[0]).to eq(3)
       expect(analyzer.means.shape[1]).to eq(2)
-      expect(analyzer.covariances.class).to eq(Numo::DFloat)
+      expect(analyzer.covariances.class).to eq(Xumo::DFloat)
       expect(analyzer.covariances.ndim).to eq(3)
       expect(analyzer.covariances.shape[0]).to eq(3)
       expect(analyzer.covariances.shape[1]).to eq(2)
@@ -59,13 +59,13 @@ RSpec.describe Rumale::Clustering::GaussianMixture do
       expect(analyzer.score(x_mlt, y_mlt)).to eq(1)
     end
 
-    context 'when Numo::Linalg is not loaded' do
+    context 'when Xumo::Linalg is not loaded' do
       before do
-        @backup = Numo::Linalg
-        Numo.class_eval { remove_const(:Linalg) }
+        @backup = Xumo::Linalg
+        Xumo.class_eval { remove_const(:Linalg) }
       end
 
-      after { Numo::Linalg = @backup }
+      after { Xumo::Linalg = @backup }
 
       it 'raises Runtime error' do
         expect { analyzer.fit(x_mlt) }.to raise_error(RuntimeError)
