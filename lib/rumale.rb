@@ -6,6 +6,7 @@ if ENV['CUMO']
     Cumo.enable_compatible_mode
     require Pathname(__FILE__).dirname + './monkey_patches/cumo'
     Xumo = Cumo
+    Xumo::Linalg = ::Numo::Linalg
   rescue LoadError
     require 'numo/narray'
     Xumo = Numo
