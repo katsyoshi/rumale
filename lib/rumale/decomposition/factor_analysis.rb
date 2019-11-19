@@ -20,19 +20,19 @@ module Rumale
       include Base::Transformer
 
       # Returns the mean vector.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :mean
 
       # Returns the estimated noise variance for each feature.
-      # @return [Numo::DFloat] (shape: [n_features])
+      # @return [Xumo::DFloat] (shape: [n_features])
       attr_reader :noise_variance
 
       # Returns the components with maximum variance.
-      # @return [Numo::DFloat] (shape: [n_components, n_features])
+      # @return [Xumo::DFloat] (shape: [n_components, n_features])
       attr_reader :components
 
       # Returns the log likelihood at each iteration.
-      # @return [Numo::DFloat] (shape: [n_iter])
+      # @return [Xumo::DFloat] (shape: [n_iter])
       attr_reader :loglike
 
       # Return the number of iterations run for optimization
@@ -63,10 +63,10 @@ module Rumale
       # Fit the model with given training data.
       #
       # @overload fit(x) -> FactorAnalysis
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [FactorAnalysis] The learned transformer itself.
       def fit(x, _y = nil)
-        raise 'FactorAnalysis#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'FactorAnalysis#fit requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         # initialize some variables.
         n_samples, n_features = x.shape
@@ -75,7 +75,7 @@ module Rumale
         cov_mat = centered_x.transpose.dot(centered_x) / n_samples
         sample_vars = x.var(0)
         sqrt_n_samples = Math.sqrt(n_samples)
-        @noise_variance = Numo::DFloat.ones(n_features)
+        @noise_variance = Xumo::DFloat.ones(n_features)
 
         # run optimization.
         old_loglike = 0.0
@@ -83,12 +83,12 @@ module Rumale
         @loglike = [] unless @params[:tol].nil?
         @params[:max_iter].times do |t|
           @n_iter = t + 1
-          sqrt_noise_variance = Numo::NMath.sqrt(@noise_variance)
+          sqrt_noise_variance = Xumo::NMath.sqrt(@noise_variance)
           scaled_x = centered_x / (sqrt_noise_variance * sqrt_n_samples + 1e-12)
           s, u = truncate_svd(scaled_x, @params[:n_components])
-          scaler = Numo::NMath.sqrt(Numo::DFloat.maximum(s**2 - 1.0, 0.0))
+          scaler = Xumo::NMath.sqrt(Xumo::DFloat.maximum(s**2 - 1.0, 0.0))
           @components = (sqrt_noise_variance.diag.dot(u) * scaler).transpose.dup
-          @noise_variance = Numo::DFloat.maximum(sample_vars - @components.transpose.dot(@components).diagonal, 1e-12)
+          @noise_variance = Xumo::DFloat.maximum(sample_vars - @components.transpose.dot(@components).diagonal, 1e-12)
           next if @params[:tol].nil?
           new_loglike = log_likelihood(cov_mat, @components, @noise_variance)
           @loglike.push(new_loglike)
@@ -96,34 +96,34 @@ module Rumale
           old_loglike = new_loglike
         end
 
-        @loglike = Numo::DFloat.cast(@loglike) unless @params[:tol].nil?
+        @loglike = Xumo::DFloat.cast(@loglike) unless @params[:tol].nil?
         @components = @components[0, true].dup if @params[:n_components] == 1
         self
       end
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @overload fit_transform(x) -> Xumo::DFloat
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
-        raise 'FactorAnalysis#fit_transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'FactorAnalysis#fit_transform requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         fit(x).transform(x)
       end
 
       # Transform the given data with the learned model.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
-        raise 'FactorAnalysis#transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'FactorAnalysis#transform requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         factors = @params[:n_components] == 1 ? @components.expand_dims(0) : @components
         centered_x = x - @mean
-        beta = Numo::Linalg.inv(Numo::DFloat.eye(factors.shape[0]) + (factors / @noise_variance).dot(factors.transpose))
+        beta = Xumo::Linalg.inv(Xumo::DFloat.eye(factors.shape[0]) + (factors / @noise_variance).dot(factors.transpose))
         z = centered_x.dot((beta.dot(factors) / @noise_variance).transpose)
         @params[:n_components] == 1 ? z[true, 0].dup : z
       end
@@ -155,13 +155,13 @@ module Rumale
       def log_likelihood(cov_mat, factors, noise_vars)
         n_samples = noise_vars.size
         fact_cov_mat = factors.transpose.dot(factors) + noise_vars.diag
-        n_samples.fdiv(2) * Math.log(Numo::Linalg.det(fact_cov_mat)) + Numo::Linalg.inv(fact_cov_mat).dot(cov_mat).trace
+        n_samples.fdiv(2) * Math.log(Xumo::Linalg.det(fact_cov_mat)) + Xumo::Linalg.inv(fact_cov_mat).dot(cov_mat).trace
       end
 
       def truncate_svd(x, k)
         m = x.shape[1]
-        eig_vals, eig_vecs = Numo::Linalg.eigh(x.transpose.dot(x), vals_range: (m - k)...m)
-        s = Numo::NMath.sqrt(eig_vals.reverse.dup)
+        eig_vals, eig_vecs = Xumo::Linalg.eigh(x.transpose.dot(x), vals_range: (m - k)...m)
+        s = Xumo::NMath.sqrt(eig_vals.reverse.dup)
         u = eig_vecs.reverse(1).dup
         [s, u]
       end

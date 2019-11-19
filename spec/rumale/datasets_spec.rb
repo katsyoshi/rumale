@@ -107,10 +107,10 @@ RSpec.describe Rumale::Dataset do
 
   it 'generates Gaussian blobs.' do
     x, y = described_class.make_blobs(100)
-    expect(x.class).to eq(Numo::DFloat)
+    expect(x.class).to eq(Xumo::DFloat)
     expect(x.shape[0]).to eq(100)
     expect(x.shape[1]).to eq(2)
-    expect(y.class).to eq(Numo::Int32)
+    expect(y.class).to eq(Xumo::Int32)
     expect(y.shape[0]).to eq(100)
     expect(y.shape[1]).to be_nil
     expect(y.eq(0).count).to eq(34)
@@ -119,12 +119,12 @@ RSpec.describe Rumale::Dataset do
   end
 
   it 'generates Gaussian blobs along with given centers.' do
-    centers = Numo::DFloat[[-20, -20], [20, 20]]
+    centers = Xumo::DFloat[[-20, -20], [20, 20]]
     x, y = described_class.make_blobs(100, 3, centers: centers, cluster_std: 0.05)
-    expect(x.class).to eq(Numo::DFloat)
+    expect(x.class).to eq(Xumo::DFloat)
     expect(x.shape[0]).to eq(100)
     expect(x.shape[1]).to eq(2)
-    expect(y.class).to eq(Numo::Int32)
+    expect(y.class).to eq(Xumo::Int32)
     expect(y.shape[0]).to eq(100)
     expect(y.shape[1]).to be_nil
     expect(y.eq(0).count).to eq(50)

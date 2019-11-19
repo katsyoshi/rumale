@@ -129,12 +129,12 @@ module Rumale
       #
       # @param n_samples [Integer] The total number of samples.
       # @param n_features [Integer] The number of features.
-      #   If "centers" parameter is given as a Numo::DFloat array, this parameter is ignored.
-      # @param centers [Integer/Numo::DFloat/Nil] The number of cluster centroids or the fixed cluster centroids.
+      #   If "centers" parameter is given as a Xumo::DFloat array, this parameter is ignored.
+      # @param centers [Integer/Xumo::DFloat/Nil] The number of cluster centroids or the fixed cluster centroids.
       #   If nil is given, the number of cluster centroids is set to 3.
       # @param cluster_std [Float] The standard deviation of the clusters.
       # @param center_box [Array] The bounding box for each cluster centroids.
-      #   If "centers" parameter is given as a Numo::DFloat array, this parameter is ignored.
+      #   If "centers" parameter is given as a Xumo::DFloat array, this parameter is ignored.
       # @param shuffle [Boolean] The flag indicating whether to shuffle the dataset
       # @param random_seed [Integer] The seed value using to initialize the random generator.
       def make_blobs(n_samples = 1000, n_features = 2,
@@ -148,7 +148,7 @@ module Rumale
         rs ||= srand
         rng = Random.new(rs)
         # initialize centers.
-        if centers.is_a?(Numo::DFloat)
+        if centers.is_a?(Xumo::DFloat)
           n_centers = centers.shape[0]
           n_features = centers.shape[1]
         else
@@ -163,11 +163,11 @@ module Rumale
         sz_cluster = [n_samples / n_centers] * n_centers
         (n_samples % n_centers).times { |n| sz_cluster[n] += 1 }
         x = Rumale::Utils.rand_normal([sz_cluster[0], n_features], rng, 0.0, cluster_std) + centers[0, true]
-        y = Numo::Int32.zeros(sz_cluster[0])
+        y = Xumo::Int32.zeros(sz_cluster[0])
         (1...n_centers).each do |n|
           c = Rumale::Utils.rand_normal([sz_cluster[n], n_features], rng, 0.0, cluster_std) + centers[n, true]
-          x = Numo::DFloat.vstack([x, c])
-          y = y.concatenate(Numo::Int32.zeros(sz_cluster[n]) + n)
+          x = Xumo::DFloat.vstack([x, c])
+          y = y.concatenate(Xumo::Int32.zeros(sz_cluster[n]) + n)
         end
         # shuffle data.
         if shuffle

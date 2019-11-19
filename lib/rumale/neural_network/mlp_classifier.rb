@@ -22,7 +22,7 @@ module Rumale
       attr_reader :network
 
       # Return the class labels.
-      # @return [Numo::Int32] (size: n_classes)
+      # @return [Xumo::Int32] (size: n_classes)
       attr_reader :classes
 
       # Return the number of iterations run for optimization
@@ -59,15 +59,15 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The labels to be used for fitting the model.
       # @return [MLPClassifier] The learned classifier itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
         y = check_convert_label_array(y)
         check_sample_label_size(x, y)
 
-        @classes = Numo::Int32[*y.to_a.uniq.sort]
+        @classes = Xumo::Int32[*y.to_a.uniq.sort]
         n_labels = @classes.size
         n_features = x.shape[1]
         sub_rng = @rng.dup
@@ -82,20 +82,20 @@ module Rumale
 
       # Predict class labels for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
-      # @return [Numo::Int32] (shape: [n_samples]) Predicted class label per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the labels.
+      # @return [Xumo::Int32] (shape: [n_samples]) Predicted class label per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         n_samples = x.shape[0]
         decision_values = predict_proba(x)
         predicted = Array.new(n_samples) { |n| @classes[decision_values[n, true].max_index] }
-        Numo::Int32.asarray(predicted)
+        Xumo::Int32.asarray(predicted)
       end
 
       # Predict probability for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
-      # @return [Numo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the probailities.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_classes]) Predicted probability of each class per sample.
       def predict_proba(x)
         x = check_convert_sample_array(x)
         out, = @network.forward(x)
@@ -111,7 +111,7 @@ module Rumale
 
       def softmax(x)
         clip = x.max(-1).expand_dims(-1)
-        exp_x = Numo::NMath.exp(x - clip)
+        exp_x = Xumo::NMath.exp(x - clip)
         exp_x / exp_x.sum(-1).expand_dims(-1)
       end
     end

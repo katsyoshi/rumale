@@ -5,7 +5,7 @@ require 'spec_helper'
 RSpec.describe Rumale::NeuralNetwork::MLPRegressor do
   let(:x) { two_clusters_dataset[0] }
   let(:single_target) { x[true, 0] + x[true, 1]**2 }
-  let(:multi_target) { Numo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Numo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
+  let(:multi_target) { Xumo::DFloat[x[true, 0].to_a, (x[true, 1]**2).to_a].transpose.dot(Xumo::DFloat[[0.6, 0.4], [0.8, 0.2]]) }
   let(:n_samples) { x.shape[0] }
   let(:n_features) { x.shape[1] }
   let(:n_outputs) { y.shape[1] }
@@ -16,7 +16,7 @@ RSpec.describe Rumale::NeuralNetwork::MLPRegressor do
 
   shared_examples 'regression' do
     it 'fits model for given dataset.', :aggregate_failures do
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(y.ndim)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be > 0.98

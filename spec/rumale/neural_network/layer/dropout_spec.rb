@@ -11,12 +11,12 @@ RSpec.describe Rumale::NeuralNetwork::Layer::Dropout do
   let(:dout) { backprop.call(x) }
 
   it 'performs dropout units', :aggregate_failures do
-    expect(out.class).to eq(Numo::DFloat)
+    expect(out.class).to eq(Xumo::DFloat)
     expect(out.ndim).to eq(x.ndim)
     expect(out.shape).to eq(x.shape)
     expect(out.eq(0).count).to be_within(5).of(60)
     expect(backprop.class).to eq(Proc)
-    expect(dout.class).to eq(Numo::DFloat)
+    expect(dout.class).to eq(Xumo::DFloat)
     expect(dout.ndim).to eq(x.ndim)
     expect(dout.shape).to eq(x.shape)
     expect(dout.eq(0).count).to be_within(5).of(60)

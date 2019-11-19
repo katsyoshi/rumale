@@ -14,22 +14,22 @@ RSpec.describe Rumale::EvaluationMeasure::SilhouetteScore do
 
   shared_examples 'calculates score' do
     context 'when all centroids are the same' do
-      let(:x) { Numo::DFloat[[13, 4], [3, 2], [8, 5], [8, 1]] }
-      let(:y) { Numo::Int32[1, 1, 2, 2] }
+      let(:x) { Xumo::DFloat[[13, 4], [3, 2], [8, 5], [8, 1]] }
+      let(:y) { Xumo::Int32[1, 1, 2, 2] }
 
       it { expect(score).to be_within(0.001).of(-0.098) }
     end
 
     context 'when all samples are the same' do
-      let(:x) { Numo::DFloat[[3, 4], [3, 4], [3, 4], [3, 4]] }
-      let(:y) { Numo::Int32[1, 1, 2, 2] }
+      let(:x) { Xumo::DFloat[[3, 4], [3, 4], [3, 4], [3, 4]] }
+      let(:y) { Xumo::Int32[1, 1, 2, 2] }
 
       it { expect(score).to eq(0.0) }
     end
 
     context 'when cluster have one sample' do
-      let(:x) { Numo::DFloat[[0, 0], [2, 2], [3, 3], [5, 5]] }
-      let(:y) { Numo::Int32[0, 0, 1, 2] }
+      let(:x) { Xumo::DFloat[[0, 0], [2, 2], [3, 3], [5, 5]] }
+      let(:y) { Xumo::Int32[0, 0, 1, 2] }
 
       it { expect(score).to be_within(0.0001).of(-0.0416) }
     end

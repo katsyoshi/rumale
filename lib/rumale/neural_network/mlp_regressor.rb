@@ -53,8 +53,8 @@ module Rumale
 
       # Fit the model with given training data.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @param y [Numo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @param y [Xumo::DFloat] (shape: [n_samples, n_outputs]) The taget values to be used for fitting the model.
       # @return [MLPRegressor] The learned regressor itself.
       def fit(x, y)
         x = check_convert_sample_array(x)
@@ -76,8 +76,8 @@ module Rumale
 
       # Predict values for samples.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
-      # @return [Numo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to predict the values.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_outputs]) Predicted values per sample.
       def predict(x)
         x = check_convert_sample_array(x)
         out, = @network.forward(x)

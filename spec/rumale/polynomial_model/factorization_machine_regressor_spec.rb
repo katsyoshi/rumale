@@ -23,15 +23,15 @@ RSpec.describe Rumale::PolynomialModel::FactorizationMachineRegressor do
     let(:y) { single_target }
 
     it 'learns the the model for single regression problem.', :aggregate_failures do
-      expect(estimator.factor_mat.class).to eq(Numo::DFloat)
+      expect(estimator.factor_mat.class).to eq(Xumo::DFloat)
       expect(estimator.factor_mat.ndim).to eq(2)
       expect(estimator.factor_mat.shape[0]).to eq(n_factors)
       expect(estimator.factor_mat.shape[1]).to eq(n_features)
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_features)
       expect(estimator.bias_term.class).to eq(Float)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)

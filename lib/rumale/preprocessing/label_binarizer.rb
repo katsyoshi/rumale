@@ -80,7 +80,7 @@ module Rumale
       # @param x [Xumo::Int32] (shape: [n_samples, n_classes]) The binarized labels to be decoded.
       # @return [Array] (shape: [n_samples]) The decoded labels.
       def inverse_transform(x)
-        x = Xumo::Int32.cast(x) unless x.is_a?(Numo::Int32)
+        x = Xumo::Int32.cast(x) unless x.is_a?(Xumo::Int32)
         n_samples = x.shape[0]
         Array.new(n_samples) { |n| @classes[x[n, true].ne(@params[:neg_label]).where[0]] }
       end

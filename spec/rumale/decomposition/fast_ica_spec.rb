@@ -9,10 +9,10 @@ RSpec.describe Rumale::Decomposition::FastICA do
   let(:whiten) { true }
   let(:fun) { 'logcosh' }
   let(:sources) do
-    t = Numo::DFloat.linspace(0, 100, n_samples)
-    s1 = Numo::NMath.cos(Math::PI * t)
-    s2 = Numo::NMath.sin(Math::PI * t + Math::PI / 4).abs
-    s = Numo::NArray.vstack([s1, s2]).transpose.dup
+    t = Xumo::DFloat.linspace(0, 100, n_samples)
+    s1 = Xumo::NMath.cos(Math::PI * t)
+    s2 = Xumo::NMath.sin(Math::PI * t + Math::PI / 4).abs
+    s = Xumo::NArray.vstack([s1, s2]).transpose.dup
     s -= s.mean(0)
     s / s.var(0)
   end
@@ -31,7 +31,7 @@ RSpec.describe Rumale::Decomposition::FastICA do
     r1, r2 = [r2, r1] if r1.dot(s1).abs < r1.dot(s2).abs
     r1 *= r1.dot(s1).positive? ? 1 : -1
     r2 *= r2.dot(s2).positive? ? 1 : -1
-    Numo::NArray.vstack([r1, r2]).transpose.dup
+    Xumo::NArray.vstack([r1, r2]).transpose.dup
   end
   let(:rec_error) do
     diff = (sources / sources[0, true] - permutated / permutated[0, true])
@@ -40,14 +40,14 @@ RSpec.describe Rumale::Decomposition::FastICA do
 
   context 'when the contrast function is logcosh' do
     it 'reconstructs the source signals', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+      expect(reconstructed.class).to eq(Xumo::DFloat)
       expect(reconstructed.shape[0]).to eq(n_samples)
       expect(reconstructed.shape[1]).to eq(n_components)
       expect(analyzer.n_iter).to be > 1
-      expect(analyzer.components.class).to eq(Numo::DFloat)
+      expect(analyzer.components.class).to eq(Xumo::DFloat)
       expect(analyzer.components.shape[0]).to eq(n_components)
       expect(analyzer.components.shape[1]).to eq(n_features)
-      expect(analyzer.mixing.class).to eq(Numo::DFloat)
+      expect(analyzer.mixing.class).to eq(Xumo::DFloat)
       expect(analyzer.mixing.shape[0]).to eq(n_features)
       expect(analyzer.mixing.shape[1]).to eq(n_components)
       expect(rec_error).to be < 1e-3
@@ -95,10 +95,10 @@ RSpec.describe Rumale::Decomposition::FastICA do
     let(:inversed) { analyzer.inverse_transform(reconstructed.expand_dims(1)) }
 
     it 'analyzes one independent component', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+      expect(reconstructed.class).to eq(Xumo::DFloat)
       expect(reconstructed.shape[0]).to eq(n_samples)
       expect(reconstructed.shape[1]).to be_nil
-      expect(inversed.class).to eq(Numo::DFloat)
+      expect(inversed.class).to eq(Xumo::DFloat)
       expect(inversed.shape[0]).to eq(n_samples)
       expect(inversed.shape[1]).to eq(n_features)
       expect(analyzer.components.shape[0]).to eq(n_features)
@@ -117,13 +117,13 @@ RSpec.describe Rumale::Decomposition::FastICA do
     end
 
     it 'reconstructs the source signals', aggregate_failures: true do
-      expect(reconstructed.class).to eq(Numo::DFloat)
+      expect(reconstructed.class).to eq(Xumo::DFloat)
       expect(reconstructed.shape[0]).to eq(n_samples)
       expect(reconstructed.shape[1]).to eq(n_components)
-      expect(analyzer.components.class).to eq(Numo::DFloat)
+      expect(analyzer.components.class).to eq(Xumo::DFloat)
       expect(analyzer.components.shape[0]).to eq(n_components)
       expect(analyzer.components.shape[1]).to eq(n_components)
-      expect(analyzer.mixing.class).to eq(Numo::DFloat)
+      expect(analyzer.mixing.class).to eq(Xumo::DFloat)
       expect(analyzer.mixing.shape[0]).to eq(n_components)
       expect(analyzer.mixing.shape[1]).to eq(n_components)
       expect(rec_error).to be < 1e-3

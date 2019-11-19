@@ -107,7 +107,7 @@ RSpec.describe Rumale::KernelMachine::KernelSVC do
       it 'estimates class probabilities with three clusters dataset in parallel.', :aggregate_failures do
         # FIXME: Remove Xumo::Linalg temporarily for avoiding Parallel::DeadWorker error.
         backup = Xumo::Linalg
-        Numo.class_eval { remove_const(:Linalg) }
+        Xumo.class_eval { remove_const(:Linalg) }
 
         expect(estimator.classes.class).to eq(Xumo::Int32)
         expect(estimator.classes.ndim).to eq(1)

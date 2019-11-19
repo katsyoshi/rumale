@@ -13,9 +13,9 @@ RSpec.describe Rumale::Validation do
   end
 
   it 'detects and converts invalid type array given.' do
-    expect(described_class.check_convert_sample_array([[1, 2, 3], [4, 5, 6]])).to eq(Numo::DFloat[[1, 2, 3], [4, 5, 6]])
-    expect(described_class.check_convert_label_array([1, 2, 3])).to eq(Numo::Int32[1, 2, 3])
-    expect(described_class.check_convert_tvalue_array([1, 2, 3])).to eq(Numo::DFloat[1, 2, 3])
+    expect(described_class.check_convert_sample_array([[1, 2, 3], [4, 5, 6]])).to eq(Xumo::DFloat[[1, 2, 3], [4, 5, 6]])
+    expect(described_class.check_convert_label_array([1, 2, 3])).to eq(Xumo::Int32[1, 2, 3])
+    expect(described_class.check_convert_tvalue_array([1, 2, 3])).to eq(Xumo::DFloat[1, 2, 3])
   end
 
   it 'detects invalid shape array given.' do

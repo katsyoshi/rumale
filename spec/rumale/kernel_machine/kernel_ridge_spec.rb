@@ -16,10 +16,10 @@ RSpec.describe Rumale::KernelMachine::KernelRidge do
     let(:y) { x[true, 0] + x[true, 1]**2 }
 
     it 'learns the model.', :aggregate_failures do
-      expect(estimator.weight_vec.class).to eq(Numo::DFloat)
+      expect(estimator.weight_vec.class).to eq(Xumo::DFloat)
       expect(estimator.weight_vec.ndim).to eq(1)
       expect(estimator.weight_vec.shape[0]).to eq(n_samples)
-      expect(predicted.class).to eq(Numo::DFloat)
+      expect(predicted.class).to eq(Xumo::DFloat)
       expect(predicted.ndim).to eq(1)
       expect(predicted.shape[0]).to eq(n_samples)
       expect(score).to be_within(0.01).of(1.0)

@@ -6,7 +6,7 @@ RSpec.describe Rumale::ModelSelection::CrossValidation do
   let(:xor) { xor_dataset }
   let(:samples) { xor[0] }
   let(:labels) { xor[1] }
-  let(:values) { samples.dot(Numo::DFloat[1.0, 2.0]) }
+  let(:values) { samples.dot(Xumo::DFloat[1.0, 2.0]) }
   let(:kernel_mat) { Rumale::PairwiseMetric.rbf_kernel(samples, nil, 1.0) }
   let(:kernel_svc) { Rumale::KernelMachine::KernelSVC.new(reg_param: 1.0, max_iter: 1000, random_seed: 1) }
   let(:linear_svc) { Rumale::LinearModel::SVC.new(random_seed: 1) }

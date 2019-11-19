@@ -17,8 +17,8 @@ module Rumale
 
       # Calculates the Calinski and Harabasz score.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The samples to be used for calculating score.
-      # @param y [Numo::Int32] (shape: [n_samples]) The predicted labels for each sample.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The samples to be used for calculating score.
+      # @param y [Xumo::Int32] (shape: [n_samples]) The predicted labels for each sample.
       # @return [Float] The Calinski and Harabasz score.
       def score(x, y)
         x = check_convert_sample_array(x)
@@ -29,7 +29,7 @@ module Rumale
         n_clusters = labels.size
         n_dimensions = x.shape[1]
 
-        centroids = Numo::DFloat.zeros(n_clusters, n_dimensions)
+        centroids = Xumo::DFloat.zeros(n_clusters, n_dimensions)
 
         within_group = 0.0
         n_clusters.times do |n|

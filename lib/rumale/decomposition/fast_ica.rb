@@ -21,11 +21,11 @@ module Rumale
       include Base::Transformer
 
       # Returns the unmixing matrix.
-      # @return [Numo::DFloat] (shape: [n_components, n_features])
+      # @return [Xumo::DFloat] (shape: [n_components, n_features])
       attr_reader :components
 
       # Returns the mixing matrix.
-      # @return [Numo::DFloat] (shape: [n_features, n_components])
+      # @return [Xumo::DFloat] (shape: [n_features, n_components])
       attr_reader :mixing
 
       # Returns the number of iterations when converged.
@@ -71,17 +71,17 @@ module Rumale
       # Fit the model with given training data.
       #
       # @overload fit(x) -> FastICA
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
       # @return [FastICA] The learned transformer itself.
       def fit(x, _y = nil)
         x = check_convert_sample_array(x)
-        raise 'FastICA#fit requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'FastICA#fit requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         @mean, whiten_mat = whitening(x, @params[:n_components]) if @params[:whiten]
         wx = @params[:whiten] ? (x - @mean).dot(whiten_mat.transpose) : x
         unmixing, @n_iter = ica(wx, @params[:fun], @params[:max_iter], @params[:tol], @rng.dup)
         @components = @params[:whiten] ? unmixing.dot(whiten_mat) : unmixing
-        @mixing = Numo::Linalg.pinv(@components)
+        @mixing = Xumo::Linalg.pinv(@components)
         if @params[:n_components] == 1
           @components = @components.flatten.dup
           @mixing = @mixing.flatten.dup
@@ -91,20 +91,20 @@ module Rumale
 
       # Fit the model with training data, and then transform them with the learned model.
       #
-      # @overload fit_transform(x) -> Numo::DFloat
-      #   @param x [Numo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data
+      # @overload fit_transform(x) -> Xumo::DFloat
+      #   @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The training data to be used for fitting the model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data
       def fit_transform(x, _y = nil)
         x = check_convert_sample_array(x)
-        raise 'FastICA#fit_transform requires Numo::Linalg but that is not loaded.' unless enable_linalg?
+        raise 'FastICA#fit_transform requires Xumo::Linalg but that is not loaded.' unless enable_linalg?
 
         fit(x).transform(x)
       end
 
       # Transform the given data with the learned model.
       #
-      # @param x [Numo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
-      # @return [Numo::DFloat] (shape: [n_samples, n_components]) The transformed data.
+      # @param x [Xumo::DFloat] (shape: [n_samples, n_features]) The data to be transformed with the learned model.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_components]) The transformed data.
       def transform(x)
         x = check_convert_sample_array(x)
         cx = @params[:whiten] ? (x - @mean) : x
@@ -113,8 +113,8 @@ module Rumale
 
       # Inverse transform the given transformed data with the learned model.
       #
-      # @param z [Numo::DFloat] (shape: [n_samples, n_components]) The source data reconstructed to the mixed data.
-      # @return [Numo::DFloat] (shape: [n_samples, n_featuress]) The mixed data.
+      # @param z [Xumo::DFloat] (shape: [n_samples, n_components]) The source data reconstructed to the mixed data.
+      # @return [Xumo::DFloat] (shape: [n_samples, n_featuress]) The mixed data.
       def inverse_transform(z)
         z = check_convert_sample_array(z)
         m = @mixing.shape[1].nil? ? @mixing.expand_dims(0).transpose : @mixing
@@ -153,8 +153,8 @@ module Rumale
         mean_vec = x.mean(0)
         centered_x = x - mean_vec
         covar_mat = centered_x.transpose.dot(centered_x) / n_samples
-        eig_vals, eig_vecs = Numo::Linalg.eigh(covar_mat, vals_range: (n_features - n_components)...n_features)
-        [mean_vec, (eig_vecs.reverse(1).dup * (1 / Numo::NMath.sqrt(eig_vals.reverse.dup))).transpose.dup]
+        eig_vals, eig_vecs = Xumo::Linalg.eigh(covar_mat, vals_range: (n_features - n_components)...n_features)
+        [mean_vec, (eig_vecs.reverse(1).dup * (1 / Xumo::NMath.sqrt(eig_vals.reverse.dup))).transpose.dup]
       end
 
       def ica(x, fun, max_iter, tol, sub_rng)
@@ -173,8 +173,8 @@ module Rumale
       end
 
       def decorrelation(w)
-        eig_vals, eig_vecs = Numo::Linalg.eigh(w.dot(w.transpose))
-        decorr_mat = (eig_vecs * (1 / Numo::NMath.sqrt(eig_vals))).dot(eig_vecs.transpose)
+        eig_vals, eig_vecs = Xumo::Linalg.eigh(w.dot(w.transpose))
+        decorr_mat = (eig_vecs * (1 / Xumo::NMath.sqrt(eig_vals))).dot(eig_vecs.transpose)
         decorr_mat.dot(w)
       end
 
@@ -190,14 +190,14 @@ module Rumale
       end
 
       def grad_logcosh(x, alpha)
-        gx = Numo::NMath.tanh(alpha * x)
+        gx = Xumo::NMath.tanh(alpha * x)
         ggx = (alpha * (1 - gx**2)).sum(0)
         [gx, ggx]
       end
 
       def grad_exp(x, alpha)
         squared_x = x**2
-        exp_x = Numo::NMath.exp(-0.5 * alpha * squared_x)
+        exp_x = Xumo::NMath.exp(-0.5 * alpha * squared_x)
         gx = exp_x * x
         ggx = (exp_x * (1 - alpha * squared_x)).sum(0)
         [gx, ggx]

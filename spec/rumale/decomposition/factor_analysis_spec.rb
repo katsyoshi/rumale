@@ -24,20 +24,20 @@ RSpec.describe Rumale::Decomposition::FactorAnalysis do
 
   shared_examples 'projection into subspace' do
     it 'projects high-dimensinal data into subspace.', aggregate_failures: true do
-      expect(sub_samples.class).to eq(Numo::DFloat)
+      expect(sub_samples.class).to eq(Xumo::DFloat)
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean.class).to eq(Xumo::DFloat)
       expect(decomposer.mean.shape[0]).to eq(n_features)
       expect(decomposer.mean.shape[1]).to be_nil
-      expect(decomposer.noise_variance.class).to eq(Numo::DFloat)
+      expect(decomposer.noise_variance.class).to eq(Xumo::DFloat)
       expect(decomposer.noise_variance.shape[0]).to eq(n_features)
       expect(decomposer.noise_variance.shape[1]).to be_nil
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components.class).to eq(Xumo::DFloat)
       expect(decomposer.components.shape[0]).to eq(n_components)
       expect(decomposer.components.shape[1]).to eq(n_features)
       expect(decomposer.n_iter).to be < max_iter
-      expect(decomposer.loglike.class).to eq(Numo::DFloat)
+      expect(decomposer.loglike.class).to eq(Xumo::DFloat)
       expect(decomposer.loglike.shape[0]).to eq(decomposer.n_iter)
       expect(decomposer.loglike.shape[1]).to be_nil
       expect(error).to be <= 0.1
@@ -54,13 +54,13 @@ RSpec.describe Rumale::Decomposition::FactorAnalysis do
     it 'projects data into one-dimensional subspace.', aggregate_failures: true do
       expect(sub_samples.shape[0]).to eq(n_samples)
       expect(sub_samples.shape[1]).to eq(n_components)
-      expect(decomposer.mean.class).to eq(Numo::DFloat)
+      expect(decomposer.mean.class).to eq(Xumo::DFloat)
       expect(decomposer.mean.shape[0]).to eq(n_features)
       expect(decomposer.mean.shape[1]).to be_nil
-      expect(decomposer.noise_variance.class).to eq(Numo::DFloat)
+      expect(decomposer.noise_variance.class).to eq(Xumo::DFloat)
       expect(decomposer.noise_variance.shape[0]).to eq(n_features)
       expect(decomposer.noise_variance.shape[1]).to be_nil
-      expect(decomposer.components.class).to eq(Numo::DFloat)
+      expect(decomposer.components.class).to eq(Xumo::DFloat)
       expect(decomposer.components.shape[0]).to eq(n_features)
       expect(decomposer.components.shape[1]).to be_nil
       expect(decomposer.n_iter).to eq(max_iter)

@@ -76,7 +76,7 @@ module Rumale
           y = check_convert_tvalue_array(y)
           check_sample_tvalue_size(x, y)
         else
-          y = Numo::NArray.asarray(y)
+          y = Xumo::NArray.asarray(y)
         end
         # Initialize the report of cross validation.
         report = { test_score: [], train_score: nil, fit_time: [] }

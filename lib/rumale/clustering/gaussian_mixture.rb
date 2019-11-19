@@ -12,7 +12,7 @@ module Rumale
     #   analyzer = Rumale::Clustering::GaussianMixture.new(n_clusters: 10, max_iter: 50)
     #   cluster_labels = analyzer.fit_predict(samples)
     #
-    #   # If Numo::Linalg is installed, you can specify 'full' for the tyep of covariance option.
+    #   # If Xumo::Linalg is installed, you can specify 'full' for the tyep of covariance option.
     #   require 'numo/linalg/autoloader'
     #   analyzer = Rumale::Clustering::GaussianMixture.new(n_clusters: 10, max_iter: 50, covariance_type: 'full')
     #   cluster_labels = analyzer.fit_predict(samples)
@@ -215,7 +215,7 @@ module Rumale
 
       def calc_inv_covariance(covar, covar_type)
         if covar_type == 'full'
-          Xumo::Linalg.inv(Numo::DFloat[*covar.to_a])
+          Xumo::Linalg.inv(Xumo::DFloat[*covar.to_a])
         else
           1.0 / covar
         end
@@ -223,7 +223,7 @@ module Rumale
 
       def calc_inv_sqrt_det_covariance(covar, covar_type)
         if covar_type == 'full'
-          1.0 / Math.sqrt(Xumo::Linalg.det(Numo::DFloat[*covar.to_a]))
+          1.0 / Math.sqrt(Xumo::Linalg.det(Xumo::DFloat[*covar.to_a]))
         else
           1.0 / Math.sqrt(covar.prod)
         end

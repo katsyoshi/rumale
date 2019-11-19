@@ -15,7 +15,7 @@ module Rumale
         # @!visibility private
         def initialize(n_inputs: nil, n_outputs: nil, optimizer: nil, rng: nil)
           @weight = 0.01 * Rumale::Utils.rand_normal([n_inputs, n_outputs], rng)
-          @bias = Numo::DFloat.zeros(n_outputs)
+          @bias = Xumo::DFloat.zeros(n_outputs)
           @optimizer_weight = optimizer.dup
           @optimizer_bias = optimizer.dup
         end
@@ -103,7 +103,7 @@ module Rumale
         def call(out, y)
           sz_batch = y.shape[0]
           z = softmax(out)
-          loss = -(y * Numo::NMath.log(z + 1e-8)).sum.fdiv(sz_batch)
+          loss = -(y * Xumo::NMath.log(z + 1e-8)).sum.fdiv(sz_batch)
           dout = (z - y) / sz_batch
           [loss, dout]
         end
@@ -112,7 +112,7 @@ module Rumale
 
         def softmax(x)
           clip = x.max(-1).expand_dims(-1)
-          exp_x = Numo::NMath.exp(x - clip)
+          exp_x = Xumo::NMath.exp(x - clip)
           exp_x / exp_x.sum(-1).expand_dims(-1)
         end
       end

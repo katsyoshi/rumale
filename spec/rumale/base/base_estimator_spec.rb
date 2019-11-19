@@ -33,7 +33,7 @@ RSpec.describe Rumale::Base::BaseEstimator do
     context 'When Xumo::Linalg is not loaded' do
       before do
         @backup = Xumo::Linalg
-        Numo.class_eval { remove_const(:Linalg) }
+        Xumo.class_eval { remove_const(:Linalg) }
       end
 
       after { Xumo::Linalg = @backup }
