@@ -103,23 +103,6 @@ module Rumale
         else
           negative_label = @classes[0]
           bin_y = Xumo::Int32.cast(y.ne(negative_label)) * 2 - 1
-=======
-        @classes = Xumo::Int32[*y.to_a.uniq.sort]
-        n_classes = @classes.size
-        _n_samples, n_features = x.shape
-
-        if n_classes > 2
-          @factor_mat = Xumo::DFloat.zeros(n_classes, @params[:n_factors], n_features)
-          @weight_vec = Xumo::DFloat.zeros(n_classes, n_features)
-          @bias_term = Xumo::DFloat.zeros(n_classes)
-          n_classes.times do |n|
-            bin_y = Xumo::Int32.cast(y.eq(@classes[n])) * 2 - 1
-            @factor_mat[n, true, true], @weight_vec[n, true], @bias_term[n] = partial_fit(x, bin_y)
-          end
-        else
-          negative_label = y.to_a.uniq.min
-          bin_y = Xumo::Int32.cast(y.ne(negative_label)) * 2 - 1
->>>>>>> fix polynominal model: add max_index.to_i
           @factor_mat, @weight_vec, @bias_term = partial_fit(x, bin_y)
         end
 
