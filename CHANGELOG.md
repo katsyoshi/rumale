@@ -1,3 +1,73 @@
+# 0.17.0
+## Breaking changes
+- Fix all linear model estimators to use the new abstract class ([BaseSGD](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/BaseSGD.html)) introduced in version 0.16.1.
+  The major differences from the old abstract class are that
+  the optimizer of LinearModel estimators is fixed to mini-batch SGD with momentum term,
+  the max_iter parameter indicates the number of epochs instead of the maximum number of iterations,
+  the fit_bias parameter is true by default, and elastic-net style regularization can be used.
+  Note that there are additions and changes to hyperparameters.
+  Existing trained linear models may need to re-train the model and adjust the hyperparameters.
+  - [LogisticRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LogisticRegression.html)
+  - [SVC](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/SVC.html)
+  - [LinearRegression](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/LinearRegression.html)
+  - [Rdige](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Ridge.html)
+  - [Lasso](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/Lasso.html)
+  - [SVR](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/SVR.html)
+- Change the default value of solver parameter on LinearRegression and Ridge to 'auto'.
+If Numo::Linalg is loaded, 'svd' is selected for the solver, otherwise 'sgd' is selected.
+- The meaning of the `max_iter` parameter of the factorization machine estimators
+has been changed from the maximum number of iterations to the number of epochs.
+  - [FactorizationMachineClassifier](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineClassifier.html)
+  - [FactorizationMachineRegressor](https://yoshoku.github.io/rumale/doc/Rumale/PolynomialModel/FactorizationMachineRegressor.html)
+
+# 0.16.1
+- Add regressor class for [ElasticNet](https://yoshoku.github.io/rumale/doc/Rumale/LinearModel/ElasticNet.html).
+- Add new linear model abstract class.
+  - In version 0.17.0, all LinearModel estimators will be changed to use this new abstract class.
+  The major differences from the existing abstract class are that
+  the optimizer of LinearModel estimators is fixed to mini-batch SGD with momentum term,
+  the max_iter parameter indicates the number of epochs instead of the maximum number of iterations,
+  the fit_bias parameter is true by default, and elastic-net style regularization can be used.
+
+# 0.16.0
+## Breaking changes
+- The meaning of the `max_iter` parameter of the multi-layer perceptron estimators
+has been changed from the maximum number of iterations to the number of epochs.
+The number of epochs is how many times the whole data is given to the training process.
+As a future plan, similar changes will be applied to other estimators used stochastic gradient descent such as SVC and Lasso.
+  - [MLPClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPClassifier.html)
+  - [MLPRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPRegressor.html)
+
+# 0.15.0
+- Add feature extractor classes:
+  - [HashVectorizer](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/HashVectorizer.html)
+  - [FeatureHasher](https://yoshoku.github.io/rumale/doc/Rumale/FeatureExtraction/FeatureHasher.html)
+
+# 0.14.5
+- Fix to suppress deprecation warning about keyword argument in Ruby 2.7.
+
+# 0.14.4
+- Add metric parameter that specifies distance metric to
+[KNeighborsClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsClassifier.html) and
+[KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html).
+- Add algorithm parameter that specifies nearest neighbor search algorithm to
+[KNeighborsClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsClassifier.html) and
+[KNeighborsRegressor](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/KNeighborsRegressor.html).
+- Add nearest neighbor search class with [vantage point tree](https://yoshoku.github.io/rumale/doc/Rumale/NearestNeighbors/VPTree.html).
+
+# 0.14.3
+- Fix documents of GradientBoosting, RandomForest, and ExtraTrees.
+- Refactor gaussian mixture clustering with Rubocop.
+- Refactor specs.
+
+# 0.14.2
+- Refactor extension codes of decision tree estimators.
+- Refactor specs.
+
+# 0.14.1
+- Fix bug where MDS optimization is not performed when tol paremeter is given.
+- Refactor specs.
+
 # 0.14.0
 - Add classifier and regressor class with multi-layer perceptron.
   - [MLPClassifier](https://yoshoku.github.io/rumale/doc/Rumale/NeuralNetwork/MLPClassifier.html)
